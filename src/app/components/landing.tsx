@@ -26,9 +26,9 @@ export default function Landing({
   const [retroCode, setRetroCode] = useState<string>("");
   const [isCreatingBoard, setIsCreatingBoard] = useState<boolean>(false);
   const [customSections, setCustomSections] = useState<string[]>([
-    "Start",
-    "Stop",
-    "Continue",
+    "Good",
+    "Bad",
+    "Meh",
     "Action Items",
   ]);
 

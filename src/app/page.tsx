@@ -11,7 +11,7 @@ import Board from "@/app/types/board";
 import User from "@/app/types/user";
 
 export default function Home() {
-  const [user, setUser] = useState<User>({ name: "", id: "" });
+  const [user, setUser] = useState<User>({ name: "", id: "", role: "" });
   const [displayName, setDisplayName] = useState<string>("");
   const [isInRoom, setIsInRoom] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -34,6 +34,7 @@ export default function Home() {
       console.log("User left the board");
       setIsInRoom(false);
       setBoard(null);
+      setUser((prevState) => ({ ...prevState, role: "" }));
     };
 
     socketInstance.on("joined_board", handleJoinedBoard);
