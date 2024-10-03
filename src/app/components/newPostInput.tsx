@@ -45,6 +45,7 @@ const NewPostInput: React.FC<NewPostInputProps> = ({ onPost, sectionId }) => {
             className={`w-full bg-[#292929] h-[70px] rounded placeholder:text-[#858585] px-[16px] py-[8px] resize-none ${scrollbarStyle}`}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            maxLength={166}
           />
           <button
             onClick={handleClose}
