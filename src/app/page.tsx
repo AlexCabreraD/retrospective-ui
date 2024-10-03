@@ -1,70 +1,57 @@
 "use client";
 
-import { useState } from "react";
-import { io } from "socket.io-client";
+import { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 import Landing from "@/app/components/landing";
 import RetroBoard from "@/app/components/retroBoard";
 import { SOCKET_SERVER_URL } from "@/app/utils/helper";
 import Section from "@/app/types/section";
 import { generateMultipleSections } from "@/app/__mock__/mockUtils";
+import Board from "@/app/types/board";
 
 export default function Home() {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-
   const [displayName, setDisplayName] = useState<string>("");
-  const [boardName, setBoardName] = useState<string>("");
-  const [boardCode, setBoardCode] = useState("");
+  const [isInRoom, setIsInRoom] = useState<boolean>(false);
 
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-  const mockSections = generateMultipleSections(4, 5);
-
+  const mockSections = generateMultipleSections(4, 1);
   const [sections, setSections] = useState<Section[]>(mockSections);
+  const [board, setBoard] = useState<Board | null>(null);
 
-  const handleConnect = (name: string, board: string) => {
-    console.log(name, board);
-    setDisplayName(name);
-    setBoardName(board);
-
+  useEffect(() => {
     const socketInstance = io(SOCKET_SERVER_URL);
     setSocket(socketInstance);
 
-    if (board) {
-      setBoardName(board);
-      setIsConnected(true);
-      socketInstance.io;
-    } else {
-      socketInstance.on("boardName", (newBoardName: string) => {
-        setBoardName(newBoardName);
-        setIsConnected(true);
-      });
-    }
+    // Listen for the 'joined_board' event to know when the user successfully joins a room
+    socketInstance.on("joined_board", () => {
+      setIsInRoom(true); // Change the view to RetroBoard once joined
+    });
 
     return () => {
       socketInstance.disconnect();
     };
-  };
+  }, [displayName]);
 
   return (
-    <div className={"h-screen w-screen flex justify-center"}>
-      {!isConnected ? (
+    <div className="h-screen w-screen flex justify-center">
+      {!isInRoom ? (
         <Landing
-          onConnect={handleConnect}
-          boardCode={boardCode}
-          setBoardCode={setBoardCode}
+          setIsInRoom={setIsInRoom}
           displayName={displayName}
           setDisplayName={setDisplayName}
           sections={sections}
-          setSections={setSections}
+          socket={socket}
+          setBoard={setBoard}
         />
       ) : (
         <RetroBoard
           displayName={displayName}
-          boardName={boardName}
-          boardCode={boardCode}
           setSections={setSections}
           sections={sections}
           socket={socket}
+          board={board}
+          setBoard={setBoard}
         />
       )}
     </div>
