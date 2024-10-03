@@ -9,7 +9,7 @@ function generatePosts(postCount: number): Post[] {
       id: i - 1,
       user: { id: i.toString(), name: `User${i}` },
       text: `This is post number ${i}`,
-      likeCount: Math.floor(Math.random() * 100), // Generate random likes for the post
+      likeCount: Math.floor(Math.random() * 100),
       comments: [],
     });
   }

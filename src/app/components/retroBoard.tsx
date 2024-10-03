@@ -20,6 +20,7 @@ interface RetroBoardProps {
   socket: Socket | null;
   board: Board | null;
   setBoard: Dispatch<SetStateAction<Board | null>>;
+  leaveBoard: () => void;
 }
 
 export default function RetroBoard({
@@ -29,6 +30,7 @@ export default function RetroBoard({
   setSections,
   board,
   setBoard,
+  leaveBoard,
 }: RetroBoardProps) {
   const [showSnack, setShowSnack] = useState<boolean>(false);
   const [replyTo, setReplyTo] = useState<post | null>(null);
@@ -137,7 +139,12 @@ export default function RetroBoard({
           <button className="mt-2 sm:mt-0 border-[2px] hover:bg-green px-4 py-1 rounded-lg">
             Start Vote
           </button>
-          <button className="mt-2 sm:mt-0 sm:ml-2 border-[2px] hover:bg-red-600 px-4 py-1 rounded-lg">
+          <button
+            className="mt-2 sm:mt-0 sm:ml-2 border-[2px] hover:bg-red-600 px-4 py-1 rounded-lg"
+            onClick={() => {
+              leaveBoard();
+            }}
+          >
             Leave
           </button>
         </div>

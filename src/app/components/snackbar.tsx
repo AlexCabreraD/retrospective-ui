@@ -3,7 +3,7 @@ import { useEffect } from "react";
 interface SnackbarProps {
   visible: boolean;
   text: string;
-  status?: "success" | "info" | "warning" | "error" | null; // New prop for status
+  status?: "success" | "info" | "warning" | "error" | null;
   onClose: () => void;
   onOpen: () => void;
 }

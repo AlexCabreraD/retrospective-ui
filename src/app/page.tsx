@@ -12,10 +12,8 @@ import User from "@/app/types/user";
 
 export default function Home() {
   const [user, setUser] = useState<User>({ name: "", id: "" });
-
   const [displayName, setDisplayName] = useState<string>("");
   const [isInRoom, setIsInRoom] = useState<boolean>(false);
-
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const mockSections = generateMultipleSections(4, 0);
@@ -27,12 +25,24 @@ export default function Home() {
     setUser((prevState) => ({ ...prevState, id: String(socketInstance.id) }));
     setSocket(socketInstance);
 
-    // Listen for the 'joined_board' event to know when the user successfully joins a room
-    socketInstance.on("joined_board", () => {
-      setIsInRoom(true); // Change the view to RetroBoard once joined
-    });
+    const handleJoinedBoard = () => {
+      console.log("User joined the board");
+      setIsInRoom(true);
+    };
 
+    const handleLeftBoard = () => {
+      console.log("User left the board");
+      setIsInRoom(false);
+      setBoard(null);
+    };
+
+    socketInstance.on("joined_board", handleJoinedBoard);
+    socketInstance.on("left_board", handleLeftBoard);
+
+    // Cleanup function
     return () => {
+      socketInstance.off("joined_board", handleJoinedBoard);
+      socketInstance.off("left_board", handleLeftBoard);
       socketInstance.disconnect();
     };
   }, []);
@@ -40,6 +50,14 @@ export default function Home() {
   useEffect(() => {
     setUser((prevState) => ({ ...prevState, name: displayName }));
   }, [displayName]);
+
+  const leaveBoard = () => {
+    if (socket) {
+      socket.emit("leave_board", { boardCode: board?.boardCode });
+    }
+    setIsInRoom(false);
+    setBoard(null);
+  };
 
   return (
     <div className="h-screen w-screen flex justify-center">
@@ -62,6 +80,7 @@ export default function Home() {
           socket={socket}
           board={board}
           setBoard={setBoard}
+          leaveBoard={leaveBoard}
         />
       )}
     </div>

@@ -127,8 +127,11 @@ export default function Landing({
               maxLength={15}
             />
             <button
-              className={"w-full rounded bg-green py-[16px] mt-[16px]"}
+              className={
+                "w-full rounded bg-green py-[16px] mt-[16px] disabled:bg-[#4e4e4e]"
+              }
               onClick={onSetName}
+              disabled={displayName.length < 2}
             >
               Get Started
             </button>
@@ -145,10 +148,19 @@ export default function Landing({
               className={
                 "bg-[#1e1e1e] placeholder:text-[#4e4e4e] px-[8px] py-[16px] rounded-[5px] w-full mt-[8px]"
               }
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleCreateBoardClick();
+                }
+              }}
               onChange={(e) => setBoardName(e.target.value)}
+              maxLength={50}
             />
             <button
-              className={"w-full rounded-[5px] bg-green py-[16px] mt-[16px]"}
+              className={
+                "w-full rounded-[5px] bg-green py-[16px] mt-[16px] disabled:bg-[#4e4e4e]"
+              }
+              disabled={boardName.length < 3}
               onClick={handleCreateBoardClick}
             >
               Create a new board
@@ -161,11 +173,20 @@ export default function Landing({
               className={
                 "bg-[#1e1e1e] placeholder:text-[#4e4e4e] px-[8px] py-[16px] rounded-[5px] w-full mt-[8px]"
               }
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleJoinBoardClick();
+                }
+              }}
               onChange={(e) => setRetroCode(e.target.value)}
+              maxLength={5}
             />
             <button
-              className={"w-full rounded-[5px] bg-green py-[16px] mt-[16px]"}
+              className={
+                "w-full rounded-[5px] bg-green py-[16px] mt-[16px] disabled:bg-[#4e4e4e]"
+              }
               onClick={handleJoinBoardClick}
+              disabled={retroCode.length != 5}
             >
               Join existing retro board
             </button>
