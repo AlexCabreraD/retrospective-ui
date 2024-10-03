@@ -33,6 +33,9 @@ export default function RetroBoard({
   const [showSnack, setShowSnack] = useState<boolean>(false);
   const [replyTo, setReplyTo] = useState<post | null>(null);
 
+  const scrollbarStyle =
+    "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
+
   useEffect(() => {
     const handleJoinedBoard = (data: { board: Board }) => {
       console.log("Joined board data:", data.board);
@@ -146,7 +149,7 @@ export default function RetroBoard({
           {sections?.map((section) => (
             <div
               key={section.id}
-              className="bg-[#1e1e1e] rounded-lg overflow-auto "
+              className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}
             >
               <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
                 <div className="flex justify-between items-center ">
@@ -160,7 +163,7 @@ export default function RetroBoard({
                 <NewPostInput onPost={handleNewPost} sectionId={section.id} />
                 <hr className="h-px bg-[#292929] border-0" />
               </div>
-              <div className={"w-full overflow-auto p-4"}>
+              <div className={"w-full overflow-auto px-4"}>
                 {section.posts
                   .slice()
                   .sort((a, b) => b.id - a.id)
