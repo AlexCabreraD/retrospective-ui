@@ -10,8 +10,10 @@ import Section from "@/app/types/section";
 import Board from "@/app/types/board";
 import AddPostResponse from "@/app/types/addPostResponse";
 import { Socket } from "socket.io-client";
+import User from "@/app/types/user";
 
 interface RetroBoardProps {
+  user: User;
   displayName: string;
   sections: Section[];
   setSections: Dispatch<SetStateAction<Section[]>>;
@@ -21,7 +23,9 @@ interface RetroBoardProps {
 }
 
 export default function RetroBoard({
+  user,
   socket,
+  sections,
   setSections,
   board,
   setBoard,
@@ -33,6 +37,7 @@ export default function RetroBoard({
     const handleJoinedBoard = (data: { board: Board }) => {
       console.log("Joined board data:", data.board);
       setBoard(data.board);
+      setSections(data.board.sections);
     };
 
     const handlePostAdded = ({
@@ -42,18 +47,22 @@ export default function RetroBoard({
       sectionId: number;
       post: Post;
     }) => {
-      console.log("Post added to section", sectionId, post);
-      setSections((prevSections) =>
-        prevSections.map((section) => {
-          if (section.id === sectionId) {
-            return {
-              ...section,
-              posts: [...section.posts, post],
-            };
-          }
-          return section;
-        }),
-      );
+      if (board?.sections.some((section) => section.id === sectionId)) {
+        console.log("Post added to section", sectionId, post);
+        setSections((prevSections) =>
+          prevSections.map((section) => {
+            if (section.id === sectionId) {
+              return {
+                ...section,
+                posts: [...section.posts, post],
+              };
+            }
+            return section;
+          }),
+        );
+      } else {
+        console.log("didnt find section");
+      }
     };
 
     socket?.on("joined_board", (data: { board: Board }) =>
@@ -65,7 +74,7 @@ export default function RetroBoard({
       socket?.off("joined_board", handleJoinedBoard);
       socket?.off("post_added", handlePostAdded);
     };
-  }, [setSections, socket, setBoard]);
+  }, [setSections, socket, setBoard, board]);
 
   const onCopyClick = () => {
     navigator.clipboard
@@ -76,10 +85,10 @@ export default function RetroBoard({
       .catch((err) => console.error("Failed to copy: ", err));
   };
 
-  const handleNewPost = async (text: string) => {
+  const handleNewPost = async (text: string, sectionId: number) => {
     const newPost: Post = {
       id: Date.now(),
-      user: { id: "currentUserId", name: "currentUserName" },
+      user: { id: user.id, name: user.name },
       text,
       likeCount: 0,
       comments: [],
@@ -87,7 +96,7 @@ export default function RetroBoard({
 
     socket?.emit(
       "add_post",
-      { boardCode: board?.boardCode, sectionId: "Section1", post: newPost },
+      { boardCode: board?.boardCode, sectionId: sectionId, post: newPost },
       (response: AddPostResponse) => {
         if (response.error) {
           console.error("Error adding post:", response.error);
@@ -109,13 +118,11 @@ export default function RetroBoard({
       />
 
       <div className="flex flex-col bg-black text-white w-full lg:w-[80%] max-w-[1720px] h-full py-6 lg:py-16 mx-auto min-w-full lg:min-w-[1250px]">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between">
-          <h1 className="text-2xl lg:text-3xl font-bold mx-4 mb-4">
-            {board?.boardName}
-          </h1>
+        <div className="flex flex-col lg:flex-row lg:items-center mb-[8px]">
+          <h1 className="text-2xl lg:text-3xl font-bold">{board?.boardName}</h1>
           <Tooltip text={"Copy"} position={"end"}>
             <span
-              className="bg-[#1e1e1e] py-1 px-4 rounded cursor-pointer"
+              className="bg-[#1e1e1e] py-1 px-4 rounded cursor-pointer ml-[8px]"
               onClick={onCopyClick}
             >
               {board?.boardCode}
@@ -123,23 +130,20 @@ export default function RetroBoard({
           </Tooltip>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between mx-4 my-2">
-          <p className="font-bold tracking-wide">Write</p>
-          <div className="flex flex-col sm:flex-row">
-            <button className="mt-2 sm:mt-0 sm:ml-2 border-[2px] hover:bg-green px-4 py-1 rounded-lg">
-              Start Vote
-            </button>
-            <button className="mt-2 sm:mt-0 sm:ml-2 border-[2px] hover:bg-red-600 px-4 py-1 rounded-lg">
-              Leave
-            </button>
-          </div>
+        <div className="flex flex-col sm:flex-row  mb-[8px]">
+          <button className="mt-2 sm:mt-0 border-[2px] hover:bg-green px-4 py-1 rounded-lg">
+            Start Vote
+          </button>
+          <button className="mt-2 sm:mt-0 sm:ml-2 border-[2px] hover:bg-red-600 px-4 py-1 rounded-lg">
+            Leave
+          </button>
         </div>
 
         <div
           className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full"
           id={"cards"}
         >
-          {board?.sections?.map((section) => (
+          {sections?.map((section) => (
             <div key={section.id} className="p-4 bg-[#1e1e1e] rounded-lg">
               <div className="flex justify-between items-center">
                 <h2 className="text-h3-lg font-semibold text-[#858585]">
@@ -149,20 +153,22 @@ export default function RetroBoard({
                   <p>{section.posts.length}</p>
                 </div>
               </div>
-              <NewPostInput onPost={handleNewPost} />
+              <NewPostInput onPost={handleNewPost} sectionId={section.id} />
               <hr className="h-px bg-[#292929] border-0 mb-6" />
-              {section.posts.map((post) => (
-                <Card
-                  key={post.id}
-                  post={post}
-                  className="mt-4"
-                  onClickReply={() => setReplyTo(post)}
-                  replyable
-                />
-              ))}
+              {section.posts
+                .slice() // Create a shallow copy of the array to avoid mutating the original array
+                .sort((a, b) => b.id - a.id) // Sort in descending order (newest first)
+                .map((post) => (
+                  <Card
+                    key={post.id}
+                    post={post}
+                    className="mt-4"
+                    onClickReply={() => setReplyTo(post)}
+                    replyable
+                  />
+                ))}
             </div>
           )) ?? <div>No sections available</div>}{" "}
-          {/* Fallback if sections is undefined */}
         </div>
       </div>
 

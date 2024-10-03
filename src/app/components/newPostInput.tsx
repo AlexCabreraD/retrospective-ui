@@ -1,10 +1,11 @@
 import React, { useState, ChangeEvent, KeyboardEvent } from "react";
 
 interface NewPostInputProps {
-  onPost: (postText: string) => void;
+  sectionId: number;
+  onPost: (postText: string, sectionId: number) => void;
 }
 
-const NewPostInput: React.FC<NewPostInputProps> = ({ onPost }) => {
+const NewPostInput: React.FC<NewPostInputProps> = ({ onPost, sectionId }) => {
   const [addingNewPost, setAddingNewPost] = useState<boolean>(false);
   const [newPostText, setNewPostText] = useState<string>("");
   const scrollbarStyle =
@@ -12,7 +13,7 @@ const NewPostInput: React.FC<NewPostInputProps> = ({ onPost }) => {
 
   const handlePost = () => {
     if (newPostText.trim()) {
-      onPost(newPostText);
+      onPost(newPostText, sectionId);
       setNewPostText("");
       setAddingNewPost(false);
     }

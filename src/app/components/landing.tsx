@@ -7,6 +7,7 @@ interface LandingProps {
   displayName: string;
   setDisplayName: Dispatch<SetStateAction<string>>;
   sections: Section[];
+  setSections: Dispatch<SetStateAction<Section[]>>;
   socket: Socket | null;
   setBoard: Dispatch<SetStateAction<Board | null>>;
   setIsInRoom: Dispatch<SetStateAction<boolean>>;
@@ -15,7 +16,7 @@ interface LandingProps {
 export default function Landing({
   displayName,
   setDisplayName,
-  sections,
+  setSections,
   socket,
   setBoard,
   setIsInRoom,
@@ -23,9 +24,15 @@ export default function Landing({
   const [isNameSet, setIsNameSet] = useState<boolean>(false);
   const [boardName, setBoardName] = useState<string>("");
   const [retroCode, setRetroCode] = useState<string>("");
+  const [isCreatingBoard, setIsCreatingBoard] = useState<boolean>(false);
+  const [customSections, setCustomSections] = useState<string[]>([
+    "Start",
+    "Stop",
+    "Continue",
+    "Action Items",
+  ]);
 
   const onNameChange = (name: string) => {
-    setDisplayName(name);
     setDisplayName(name);
   };
 
@@ -49,7 +56,29 @@ export default function Landing({
   };
 
   const handleCreateBoardClick = () => {
-    socket?.emit("create_board", { displayName, boardName, sections });
+    setIsCreatingBoard(true);
+  };
+
+  const handleSectionChange = (index: number, title: string) => {
+    const updatedSections = [...customSections];
+    updatedSections[index] = title;
+    setCustomSections(updatedSections);
+  };
+
+  const handleSubmitSections = () => {
+    const sections = customSections.map((title, index) => ({
+      id: index + 1,
+      title,
+      posts: [],
+    }));
+
+    setSections(sections);
+
+    socket?.emit("create_board", {
+      displayName,
+      boardName,
+      sections,
+    });
 
     socket?.on("board_created", (data: { board: Board }) => {
       console.log("Created board:", data);
@@ -84,6 +113,7 @@ export default function Landing({
             <p className={"pt-[32px]"}>Enter your display name</p>
             <input
               placeholder={"Your Name"}
+              value={displayName}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
                   onSetName();
@@ -94,6 +124,7 @@ export default function Landing({
               }
               onChange={(e) => onNameChange(e.target.value)}
               disabled={isNameSet}
+              maxLength={15}
             />
             <button
               className={"w-full rounded bg-green py-[16px] mt-[16px]"}
@@ -103,7 +134,8 @@ export default function Landing({
             </button>
           </>
         )}
-        {isNameSet && (
+
+        {isNameSet && !isCreatingBoard && (
           <>
             <p className={"pt-[32px] mt-[64px]"}>
               Enter your retro board&#39;s name
@@ -136,6 +168,30 @@ export default function Landing({
               onClick={handleJoinBoardClick}
             >
               Join existing retro board
+            </button>
+          </>
+        )}
+
+        {isCreatingBoard && (
+          <>
+            <p className={"mt-[32px]"}>Customize your sections</p>
+            {customSections.map((section, index) => (
+              <input
+                key={index}
+                value={section}
+                placeholder={`Section ${index + 1}`}
+                className={
+                  "bg-[#1e1e1e] placeholder:text-[#4e4e4e] px-[8px] py-[16px] rounded-[5px] w-full mt-[16px]"
+                }
+                onChange={(e) => handleSectionChange(index, e.target.value)}
+                maxLength={17}
+              />
+            ))}
+            <button
+              className={"w-full rounded bg-green py-[16px] mt-[32px]"}
+              onClick={handleSubmitSections}
+            >
+              Create board with sections
             </button>
           </>
         )}

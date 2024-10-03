@@ -34,8 +34,8 @@ export default function PostCard({
       id={String(post.id)}
       className={`bg-[#292929] h-fit max-h-[200px] rounded-[10px] ${scrollbarStyle} ${className}`}
     >
-      <p className="py-[8px] px-[16px]">{post.text}</p>
-      <div className="flex flex-row justify-between items-center bg-[#292929] sticky bottom-0 py-[8px] px-[16px]">
+      <p className="pt-[16px] px-[16px]">{post.text}</p>
+      <div className="flex flex-row justify-between items-center bg-[#292929] sticky bottom-0 py-[16px] px-[16px]">
         <div>
           <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
             <span className="font-medium text-gray-600 dark:text-gray-300">

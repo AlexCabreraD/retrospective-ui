@@ -6,7 +6,7 @@ function generatePosts(postCount: number): Post[] {
 
   for (let i = 1; i <= postCount; i++) {
     posts.push({
-      id: i,
+      id: i - 1,
       user: { id: i.toString(), name: `User${i}` },
       text: `This is post number ${i}`,
       likeCount: Math.floor(Math.random() * 100), // Generate random likes for the post
@@ -36,7 +36,7 @@ export function generateMultipleSections(
   const sections: Section[] = [];
 
   for (let i = 1; i <= sectionCount; i++) {
-    sections.push(generateSection(i, `Section ${i}`, postsPerSection));
+    sections.push(generateSection(i, `Section ${i - 1}`, postsPerSection));
   }
 
   return sections;
