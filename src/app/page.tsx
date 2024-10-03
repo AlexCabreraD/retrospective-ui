@@ -25,8 +25,10 @@ export default function Home() {
     setUser((prevState) => ({ ...prevState, id: String(socketInstance.id) }));
     setSocket(socketInstance);
 
-    const handleJoinedBoard = () => {
+    const handleJoinedBoard = (data: { board: Board }) => {
       console.log("User joined the board");
+      setBoard(data.board);
+      setSections(data.board.sections);
       setIsInRoom(true);
     };
 
@@ -37,10 +39,11 @@ export default function Home() {
       setUser((prevState) => ({ ...prevState, role: "" }));
     };
 
-    socketInstance.on("joined_board", handleJoinedBoard);
+    socketInstance.on("joined_board", (data: { board: Board }) =>
+      handleJoinedBoard(data),
+    );
     socketInstance.on("left_board", handleLeftBoard);
 
-    // Cleanup function
     return () => {
       socketInstance.off("joined_board", handleJoinedBoard);
       socketInstance.off("left_board", handleLeftBoard);

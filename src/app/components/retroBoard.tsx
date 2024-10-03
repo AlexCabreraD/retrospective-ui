@@ -53,12 +53,6 @@ export default function RetroBoard({
   };
 
   useEffect(() => {
-    const handleJoinedBoard = (data: { board: Board }) => {
-      console.log("Joined board data:", data.board);
-      setBoard(data.board);
-      setSections(data.board.sections);
-    };
-
     const handlePostAdded = ({
       sectionId,
       post,
@@ -84,13 +78,9 @@ export default function RetroBoard({
       }
     };
 
-    socket?.on("joined_board", (data: { board: Board }) =>
-      handleJoinedBoard(data),
-    );
     socket?.on("post_added", handlePostAdded);
 
     return () => {
-      socket?.off("joined_board", handleJoinedBoard);
       socket?.off("post_added", handlePostAdded);
     };
   }, [setSections, socket, setBoard, board]);
@@ -199,7 +189,7 @@ export default function RetroBoard({
                   ))}
               </div>
             </div>
-          )) ?? <div>No sections available</div>}{" "}
+          )) ?? <div>No sections available</div>}
         </div>
       </div>
 

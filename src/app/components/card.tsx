@@ -1,6 +1,8 @@
 import { FaReply } from "react-icons/fa6";
 import post from "@/app/types/post";
 import { Comment } from "@/app/types/comment";
+import { stringToColor } from "@/app/utils/helper";
+import { useEffect, useState } from "react";
 
 interface PostCardBaseProps {
   post: post | Comment;
@@ -29,15 +31,24 @@ export default function PostCard({
   const scrollbarStyle =
     "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
 
+  const [color, setColor] = useState<string>("");
+
+  useEffect(() => {
+    setColor(stringToColor(post.user.id));
+  }, [post.user.id]);
+
   return (
     <div
       id={String(post.id)}
       className={`bg-[#292929] max-h-[200px] rounded-[10px] z-1 ${scrollbarStyle} ${className}`}
     >
       <p className="pt-[16px] px-[16px]">{post.text}</p>
-      <div className="flex flex-row justify-between items-center bg-[#292929] sticky bottom-0 py-[16px] px-[16px]">
-        <div>
-          <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+      <div className="flex flex-row justify-between items-center sticky bottom-0 py-[16px] px-[16px]">
+        <div className="flex items-center">
+          <div
+            className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full"
+            style={{ backgroundColor: color }}
+          >
             <span className="font-medium text-gray-600 dark:text-gray-300">
               {post.user.name[0]}
             </span>
