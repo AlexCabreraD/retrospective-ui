@@ -108,7 +108,7 @@ export default function RetroBoard({
   };
 
   return (
-    <div className="w-full flex flex-col items-center px-4 sm:px-6 lg:flex-row lg:justify-center lg:items-start">
+    <div className="w-full flex flex-col items-center px-4 sm:px-6 lg:flex-row lg:justify-center lg:items-start overflow-hidden">
       <Snackbar
         visible={showSnack}
         text={"Copied Retro Board Code"}
@@ -117,7 +117,7 @@ export default function RetroBoard({
         onClose={() => setShowSnack(false)}
       />
 
-      <div className="flex flex-col bg-black text-white w-full lg:w-[80%] max-w-[1720px] h-full py-6 lg:py-16 mx-auto min-w-full lg:min-w-[1250px]">
+      <div className="flex flex-col bg-black text-white w-full lg:w-[80%] max-w-[1720px] h-full py-6 lg:py-16 mx-auto min-w-full lg:min-w-[1250px] ">
         <div className="flex flex-col lg:flex-row lg:items-center mb-[8px]">
           <h1 className="text-2xl lg:text-3xl font-bold">{board?.boardName}</h1>
           <Tooltip text={"Copy"} position={"end"}>
@@ -130,7 +130,7 @@ export default function RetroBoard({
           </Tooltip>
         </div>
 
-        <div className="flex flex-col sm:flex-row  mb-[8px]">
+        <div className="flex flex-col sm:flex-row mb-[8px]">
           <button className="mt-2 sm:mt-0 border-[2px] hover:bg-green px-4 py-1 rounded-lg">
             Start Vote
           </button>
@@ -140,33 +140,40 @@ export default function RetroBoard({
         </div>
 
         <div
-          className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full"
+          className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full overflow-hidden "
           id={"cards"}
         >
           {sections?.map((section) => (
-            <div key={section.id} className="p-4 bg-[#1e1e1e] rounded-lg">
-              <div className="flex justify-between items-center">
-                <h2 className="text-h3-lg font-semibold text-[#858585]">
-                  {section.title}
-                </h2>
-                <div className="rounded-lg border-[2px] border-[#353535] w-10 h-10 flex justify-center items-center">
-                  <p>{section.posts.length}</p>
+            <div
+              key={section.id}
+              className="bg-[#1e1e1e] rounded-lg overflow-auto "
+            >
+              <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
+                <div className="flex justify-between items-center ">
+                  <h2 className="text-h3-lg font-semibold text-[#858585]">
+                    {section.title}
+                  </h2>
+                  <div className="rounded-lg border-[2px] border-[#353535] w-10 h-10 flex justify-center items-center">
+                    <p>{section.posts.length}</p>
+                  </div>
                 </div>
+                <NewPostInput onPost={handleNewPost} sectionId={section.id} />
+                <hr className="h-px bg-[#292929] border-0" />
               </div>
-              <NewPostInput onPost={handleNewPost} sectionId={section.id} />
-              <hr className="h-px bg-[#292929] border-0 mb-6" />
-              {section.posts
-                .slice() // Create a shallow copy of the array to avoid mutating the original array
-                .sort((a, b) => b.id - a.id) // Sort in descending order (newest first)
-                .map((post) => (
-                  <Card
-                    key={post.id}
-                    post={post}
-                    className="mt-4"
-                    onClickReply={() => setReplyTo(post)}
-                    replyable
-                  />
-                ))}
+              <div className={"w-full overflow-auto p-4"}>
+                {section.posts
+                  .slice()
+                  .sort((a, b) => b.id - a.id)
+                  .map((post) => (
+                    <Card
+                      key={post.id}
+                      post={post}
+                      className="mt-4"
+                      onClickReply={() => setReplyTo(post)}
+                      replyable
+                    />
+                  ))}
+              </div>
             </div>
           )) ?? <div>No sections available</div>}{" "}
         </div>

@@ -32,7 +32,7 @@ export default function PostCard({
   return (
     <div
       id={String(post.id)}
-      className={`bg-[#292929] h-fit max-h-[200px] rounded-[10px] ${scrollbarStyle} ${className}`}
+      className={`bg-[#292929] max-h-[200px] rounded-[10px] z-1 ${scrollbarStyle} ${className}`}
     >
       <p className="pt-[16px] px-[16px]">{post.text}</p>
       <div className="flex flex-row justify-between items-center bg-[#292929] sticky bottom-0 py-[16px] px-[16px]">
