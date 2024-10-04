@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import Section from "@/app/types/section";
 import Board from "@/app/types/board";
 import { Socket } from "socket.io-client";
+import User from "@/app/types/user";
 
 interface LandingProps {
   displayName: string;
@@ -11,6 +12,7 @@ interface LandingProps {
   socket: Socket | null;
   setBoard: Dispatch<SetStateAction<Board | null>>;
   setIsInRoom: Dispatch<SetStateAction<boolean>>;
+  setUser: Dispatch<SetStateAction<User>>;
 }
 
 export default function Landing({
@@ -20,6 +22,7 @@ export default function Landing({
   socket,
   setBoard,
   setIsInRoom,
+  setUser,
 }: LandingProps) {
   const [isNameSet, setIsNameSet] = useState<boolean>(false);
   const [boardName, setBoardName] = useState<string>("");
@@ -80,9 +83,10 @@ export default function Landing({
       sections,
     });
 
-    socket?.on("board_created", (data: { board: Board }) => {
+    socket?.on("board_created", (data: { board: Board; user: User }) => {
       console.log("Created board:", data);
       setBoard(data.board);
+      setUser((prevState) => ({ ...data.user, color: prevState.color }));
       setIsInRoom(true);
     });
 

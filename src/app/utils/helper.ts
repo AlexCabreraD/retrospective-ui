@@ -1,17 +1,28 @@
 export const SOCKET_SERVER_URL: string = "http://localhost:8080";
 
-export function stringToColor(str: string): string {
-  // Normalize the string to lowercase to ensure consistent color generation
-  str = str.trim().toLowerCase();
-
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  const r = (hash >> 16) & 0xff;
-  const g = (hash >> 8) & 0xff;
-  const b = hash & 0xff;
-
-  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+export function randomInteger(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export const profileIconColors: string[] = [
+  "#FF5733", // Red-Orange
+  "#C70039", // Crimson
+  "#FFC300", // Gold
+  "#FF5733", // Tomato
+  "#DAF7A6", // Light Green
+  "#581845", // Purple
+  "#900C3F", // Dark Pink
+  "#FF6F61", // Coral
+  "#4B0082", // Indigo
+  "#FF8C00", // Dark Orange
+  "#28B463", // Green
+  "#3498DB", // Sky Blue
+  "#8E44AD", // Amethyst
+  "#F39C12", // Orange
+  "#E67E22", // Carrot
+  "#1F618D", // Dark Blue
+  "#F1C40F", // Bright Yellow
+  "#D35400", // Pumpkin
+  "#2ECC71", // Emerald
+  "#A569BD", // Lavender
+];

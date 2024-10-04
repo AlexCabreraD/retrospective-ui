@@ -97,7 +97,12 @@ export default function RetroBoard({
   const handleNewPost = async (text: string, sectionId: number) => {
     const newPost: Post = {
       id: Date.now(),
-      user: { id: user.id, name: user.name, role: user.role },
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        color: user.color,
+      },
       text,
       likeCount: 0,
       comments: [],

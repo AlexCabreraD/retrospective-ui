@@ -4,14 +4,24 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import Landing from "@/app/components/landing";
 import RetroBoard from "@/app/components/retroBoard";
-import { SOCKET_SERVER_URL } from "@/app/utils/helper";
+import {
+  profileIconColors,
+  randomInteger,
+  SOCKET_SERVER_URL,
+} from "@/app/utils/helper";
 import Section from "@/app/types/section";
 import { generateMultipleSections } from "@/app/__mock__/mockUtils";
 import Board from "@/app/types/board";
 import User from "@/app/types/user";
 
 export default function Home() {
-  const [user, setUser] = useState<User>({ name: "", id: "", role: "" });
+  const userColor = profileIconColors[randomInteger(0, 20)];
+  const [user, setUser] = useState<User>({
+    name: "",
+    id: "",
+    role: "",
+    color: userColor,
+  });
   const [displayName, setDisplayName] = useState<string>("");
   const [isInRoom, setIsInRoom] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -22,13 +32,13 @@ export default function Home() {
 
   useEffect(() => {
     const socketInstance = io(SOCKET_SERVER_URL);
-    setUser((prevState) => ({ ...prevState, id: String(socketInstance.id) }));
     setSocket(socketInstance);
 
-    const handleJoinedBoard = (data: { board: Board }) => {
-      console.log("User joined the board");
+    const handleJoinedBoard = (data: { board: Board; user: User }) => {
+      console.log(`${user} joined the board`);
       setBoard(data.board);
       setSections(data.board.sections);
+      setUser((prevState) => ({ ...data.user, color: prevState.color }));
       setIsInRoom(true);
     };
 
@@ -36,10 +46,9 @@ export default function Home() {
       console.log("User left the board");
       setIsInRoom(false);
       setBoard(null);
-      setUser((prevState) => ({ ...prevState, role: "" }));
     };
 
-    socketInstance.on("joined_board", (data: { board: Board }) =>
+    socketInstance.on("joined_board", (data: { board: Board; user: User }) =>
       handleJoinedBoard(data),
     );
     socketInstance.on("left_board", handleLeftBoard);
@@ -67,6 +76,7 @@ export default function Home() {
     <div className="h-screen w-screen flex justify-center">
       {!isInRoom ? (
         <Landing
+          setUser={setUser}
           setIsInRoom={setIsInRoom}
           displayName={displayName}
           setSections={setSections}
