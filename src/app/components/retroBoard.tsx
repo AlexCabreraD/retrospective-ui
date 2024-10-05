@@ -35,9 +35,14 @@ export default function RetroBoard({
   const [showSnack, setShowSnack] = useState<boolean>(false);
   const [replyTo, setReplyTo] = useState<post | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [voting, setVoting] = useState<boolean>(false);
 
   const scrollbarStyle =
     "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
+
+  const onVotingClick = () => {
+    socket?.emit("start_voting");
+  };
 
   const handleLeaveBoard = () => {
     leaveBoard();
@@ -53,6 +58,9 @@ export default function RetroBoard({
   };
 
   useEffect(() => {
+    const handleStartVote = () => {
+      setVoting(true);
+    };
     const handlePostAdded = ({
       sectionId,
       post,
@@ -79,9 +87,11 @@ export default function RetroBoard({
     };
 
     socket?.on("post_added", handlePostAdded);
+    socket?.on("vote_started", handleStartVote);
 
     return () => {
       socket?.off("post_added", handlePostAdded);
+      socket?.off("vote_started", handleStartVote);
     };
   }, [setSections, socket, setBoard, board]);
 
@@ -145,11 +155,16 @@ export default function RetroBoard({
         </div>
 
         <div className="flex flex-col sm:flex-row mb-[8px]">
-          <button className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg">
-            Start Vote
-          </button>
+          {user.role === "creator" && (
+            <button
+              className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg"
+              onClick={onVotingClick}
+            >
+              Start Vote
+            </button>
+          )}
           <button
-            className="mt-2 sm:mt-0 sm:ml-2 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg"
+            className={`mt-2 sm:mt-0 ${user.role === "creator" ? "sm:ml-2" : ""} border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg`}
             onClick={() => {
               setShowConfirmModal(true);
             }}
@@ -167,17 +182,21 @@ export default function RetroBoard({
               key={section.id}
               className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}
             >
-              <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
+              <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10 "}>
                 <div className="flex justify-between items-center ">
                   <h2 className="text-h3-lg font-semibold text-[#858585]">
                     {section.title}
                   </h2>
-                  <div className="rounded-lg border-[2px] border-[#353535] w-10 h-10 flex justify-center items-center">
+                  <div className="rounded-lg border-[2px] border-[#353535] w-10 h-10 flex justify-center items-center ">
                     <p>{section.posts.length}</p>
                   </div>
                 </div>
-                <NewPostInput onPost={handleNewPost} sectionId={section.id} />
-                <hr className="h-px bg-[#292929] border-0" />
+                <NewPostInput
+                  onPost={handleNewPost}
+                  sectionId={section.id}
+                  voting={voting}
+                />
+                <hr className="h-px bg-[#292929] border-0 mt-[32px]" />
               </div>
               <div className={"w-full overflow-auto px-4"}>
                 {section.posts
@@ -206,7 +225,7 @@ export default function RetroBoard({
       )}
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-[#0f0f0f] p-6 rounded-lg shadow-[0_0px_60px_0px_rgba(0,0,0,0.3)]">
+          <div className="bg-[#0f0f0f] p-6 rounded shadow-[0_0px_55px_2px_rgba(0,0,0,.4)]">
             <h2 className="text-lg font-bold mb-4">Are you sure?</h2>
             <p className="mb-4">
               If you leave, your posts will remain visible on the board.

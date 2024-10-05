@@ -1,6 +1,6 @@
 import { FaReply } from "react-icons/fa6";
 import post from "@/app/types/post";
-import { Comment } from "@/app/types/comment";
+import Comment from "@/app/types/comment";
 
 interface PostCardBaseProps {
   post: post | Comment;

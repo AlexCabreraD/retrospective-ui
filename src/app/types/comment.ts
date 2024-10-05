@@ -1,6 +1,6 @@
 import User from "@/app/types/user";
 
-export interface Comment {
+export default interface Comment {
   id: number;
   user: User;
   text: string;
