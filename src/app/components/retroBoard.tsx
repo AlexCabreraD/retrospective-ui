@@ -69,7 +69,6 @@ export default function RetroBoard({
       post: Post;
     }) => {
       if (board?.sections.some((section) => section.id === sectionId)) {
-        console.log("Post added to section", sectionId, post);
         setSections((prevSections) =>
           prevSections.map((section) => {
             if (section.id === sectionId) {
@@ -93,28 +92,20 @@ export default function RetroBoard({
     }) => {
       setSections((prevSections) =>
         prevSections.map((section) => {
-          console.log("Checking section:", section.id, data.sectionId); // Log the section id being checked
           if (section.id === data.sectionId) {
-            console.log("Found matching section:", section.id); // Log when a matching section is found
-
             return {
               ...section,
               posts: section.posts.map((post) => {
-                console.log("Checking post:", post.id); // Log the post id being checked
-
                 if (post.id === data.postId) {
-                  console.log("Found matching post:", post.id); // Log when a matching post is found
-                  console.log("Updating likeCount to:", data.likeCount); // Log the new likeCount
-
-                  return { ...post, likeCount: data.likeCount }; // Update the post with new data
+                  return { ...post, likeCount: data.likeCount };
                 }
 
-                return post; // Keep other posts unchanged
+                return post;
               }),
             };
           }
 
-          return section; // Keep other sections unchanged
+          return section;
         }),
       );
     };
