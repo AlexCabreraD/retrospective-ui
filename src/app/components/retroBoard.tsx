@@ -86,16 +86,52 @@ export default function RetroBoard({
       }
     };
 
+    const updateUpvotedPost = (data: {
+      likeCount: number;
+      postId: number;
+      sectionId: number;
+    }) => {
+      setSections((prevSections) =>
+        prevSections.map((section) => {
+          console.log("Checking section:", section.id, data.sectionId); // Log the section id being checked
+          if (section.id === data.sectionId) {
+            console.log("Found matching section:", section.id); // Log when a matching section is found
+
+            return {
+              ...section,
+              posts: section.posts.map((post) => {
+                console.log("Checking post:", post.id); // Log the post id being checked
+
+                if (post.id === data.postId) {
+                  console.log("Found matching post:", post.id); // Log when a matching post is found
+                  console.log("Updating likeCount to:", data.likeCount); // Log the new likeCount
+
+                  return { ...post, likeCount: data.likeCount }; // Update the post with new data
+                }
+
+                return post; // Keep other posts unchanged
+              }),
+            };
+          }
+
+          return section; // Keep other sections unchanged
+        }),
+      );
+    };
+
     socket?.on("post_added", handlePostAdded);
     socket?.on("vote_started", handleStartVote);
+    socket?.on("post_upvoted", updateUpvotedPost);
 
     return () => {
       socket?.off("post_added", handlePostAdded);
       socket?.off("vote_started", handleStartVote);
+      socket?.off("post_upvoted", updateUpvotedPost);
     };
   }, [setSections, socket, setBoard, board]);
 
   const onCopyClick = () => {
+    console.log(sections);
     navigator.clipboard
       .writeText(board?.boardCode || "")
       .then(() => {
@@ -182,8 +218,8 @@ export default function RetroBoard({
               key={section.id}
               className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}
             >
-              <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10 "}>
-                <div className="flex justify-between items-center ">
+              <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
+                <div className="flex justify-between items-center">
                   <h2 className="text-h3-lg font-semibold text-[#858585]">
                     {section.title}
                   </h2>
@@ -198,7 +234,7 @@ export default function RetroBoard({
                 />
                 <hr className="h-px bg-[#292929] border-0 mt-[32px]" />
               </div>
-              <div className={"w-full overflow-auto px-4"}>
+              <div className={"w-full overflow-auto px-4 relative"}>
                 {section.posts
                   .slice()
                   .sort((a, b) => b.id - a.id)
@@ -208,6 +244,9 @@ export default function RetroBoard({
                       post={post}
                       className="mt-4"
                       onClickReply={() => setReplyTo(post)}
+                      voting={voting}
+                      socket={socket}
+                      sectionId={section.id}
                       replyable
                     />
                   ))}

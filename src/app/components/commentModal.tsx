@@ -1,7 +1,7 @@
 import post from "@/app/types/post";
 import Card from "@/app/components/card";
 import { IoSend } from "react-icons/io5";
-import { Comment } from "@/app/types/comment";
+import Comment from "@/app/types/comment";
 
 interface CommentModalProps {
   post: post;
