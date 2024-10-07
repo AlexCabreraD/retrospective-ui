@@ -4,12 +4,18 @@ import { IoSend } from "react-icons/io5";
 import Comment from "@/app/types/comment";
 import { Socket } from "socket.io-client";
 import { useEffect, useState } from "react";
+import { scrollbarStyle } from "@/app/utils/helper";
 
 interface CommentModalProps {
   socket: Socket | null;
   post: post;
   sectionId: number;
   clearReplyToPost: () => void;
+  handleSendComment: (
+    commentText: string,
+    sectionId: number,
+    postId: number,
+  ) => void;
 }
 
 export default function CommentModal({
@@ -17,6 +23,7 @@ export default function CommentModal({
   post,
   sectionId,
   clearReplyToPost,
+  handleSendComment,
 }: CommentModalProps) {
   const [commentText, setCommentText] = useState<string>("");
 
@@ -24,15 +31,10 @@ export default function CommentModal({
     console.log("update comments", post.comments);
   }, [post.comments]);
 
-  const handleSendComment = () => {
+  const handleSendClick = () => {
     setCommentText("");
-    socket?.emit("post_comment", {
-      postId: post.id,
-      sectionId: sectionId,
-      commentText: commentText,
-    });
+    handleSendComment(commentText, sectionId, post.id);
   };
-
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 sm:hidden">
@@ -45,7 +47,9 @@ export default function CommentModal({
             Close
           </button>
 
-          <div className="p-4 pt-8 flex-grow overflow-y-auto">
+          <div
+            className={`p-4 pt-8 flex-grow overflow-y-auto ${scrollbarStyle}`}
+          >
             <Card
               post={post}
               sectionId={sectionId}
@@ -71,12 +75,12 @@ export default function CommentModal({
               className="w-full bg-[#292929] h-12 rounded mr-4 placeholder:text-[#858585] px-4"
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
-                  handleSendComment();
+                  handleSendClick();
                 }
               }}
               onChange={(e) => setCommentText(e.target.value)}
             />
-            <button className="border-0" onClick={handleSendComment}>
+            <button className="border-0" onClick={handleSendClick}>
               <IoSend size={25} />
             </button>
           </div>
@@ -91,7 +95,7 @@ export default function CommentModal({
         >
           Close
         </button>
-        <div className="p-4 pt-8 flex-grow overflow-y-auto">
+        <div className={`p-4 pt-8 flex-grow overflow-y-auto ${scrollbarStyle}`}>
           <Card key={post.id} post={post} socket={null} className="mb-8" />
           <hr className="h-px bg-[#292929] border-0 mb-8" />
 
@@ -112,12 +116,12 @@ export default function CommentModal({
             value={commentText}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                handleSendComment();
+                handleSendClick();
               }
             }}
             onChange={(e) => setCommentText(e.target.value)}
           />
-          <button className="border-0" onClick={handleSendComment}>
+          <button className="border-0" onClick={handleSendClick}>
             <IoSend size={25} />
           </button>
         </div>

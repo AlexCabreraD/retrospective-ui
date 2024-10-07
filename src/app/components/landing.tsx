@@ -13,6 +13,7 @@ interface LandingProps {
   setBoard: Dispatch<SetStateAction<Board | null>>;
   setIsInRoom: Dispatch<SetStateAction<boolean>>;
   setUser: Dispatch<SetStateAction<User>>;
+  user: User;
 }
 
 export default function Landing({
@@ -23,6 +24,7 @@ export default function Landing({
   setBoard,
   setIsInRoom,
   setUser,
+  user,
 }: LandingProps) {
   const [isNameSet, setIsNameSet] = useState<boolean>(false);
   const [boardName, setBoardName] = useState<string>("");
@@ -45,7 +47,11 @@ export default function Landing({
 
   const handleJoinBoardClick = () => {
     setBoardName("joining...");
-    socket?.emit("join_board", { boardCode: retroCode, displayName });
+    socket?.emit("join_board", {
+      boardCode: retroCode,
+      displayName,
+      bgColor: user.color,
+    });
 
     socket?.on("joined_board", (data: { board: Board }) => {
       console.log("Joined board data:", data);
@@ -81,12 +87,13 @@ export default function Landing({
       displayName,
       boardName,
       sections,
+      bgColor: user.color,
     });
 
     socket?.on("board_created", (data: { board: Board; user: User }) => {
       console.log("Created board:", data);
       setBoard(data.board);
-      setUser((prevState) => ({ ...data.user, color: prevState.color }));
+      setUser({ ...data.user, color: user.color });
       setIsInRoom(true);
     });
 

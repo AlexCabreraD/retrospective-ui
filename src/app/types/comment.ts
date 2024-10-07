@@ -4,5 +4,4 @@ export default interface Comment {
   id: number;
   user: User;
   text: string;
-  timestamp: Date;
 }

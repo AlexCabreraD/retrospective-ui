@@ -19,7 +19,7 @@ export default function Home() {
     name: "",
     id: "",
     role: "",
-    color: "",
+    color: userColor,
   });
   const [displayName, setDisplayName] = useState<string>("");
   const [isInRoom, setIsInRoom] = useState<boolean>(false);
@@ -29,10 +29,6 @@ export default function Home() {
   const [board, setBoard] = useState<Board | null>(null);
 
   useEffect(() => {
-    setUser((prevState) => ({ ...prevState, color: userColor }));
-  }, [userColor]);
-
-  useEffect(() => {
     const socketInstance = io(SOCKET_SERVER_URL);
     setSocket(socketInstance);
 
@@ -40,7 +36,7 @@ export default function Home() {
       console.log(`${user} joined the board`);
       setBoard(data.board);
       setSections(data.board.sections);
-      setUser((prevState) => ({ ...data.user, color: prevState.color }));
+      setUser({ ...data.user, color: user.color });
       setIsInRoom(true);
     };
 
@@ -78,6 +74,7 @@ export default function Home() {
     <div className="h-screen w-screen flex justify-center">
       {!isInRoom ? (
         <Landing
+          user={user}
           setUser={setUser}
           setIsInRoom={setIsInRoom}
           displayName={displayName}

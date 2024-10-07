@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, KeyboardEvent } from "react";
+import { scrollbarStyle } from "@/app/utils/helper";
 
 interface NewPostInputProps {
   sectionId: number;
@@ -13,8 +14,6 @@ const NewPostInput: React.FC<NewPostInputProps> = ({
 }) => {
   const [addingNewPost, setAddingNewPost] = useState<boolean>(false);
   const [newPostText, setNewPostText] = useState<string>("");
-  const scrollbarStyle =
-    "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
 
   const handlePost = () => {
     if (newPostText.trim()) {

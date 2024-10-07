@@ -4,6 +4,7 @@ import Comment from "@/app/types/comment";
 import { Socket } from "socket.io-client";
 import { Dispatch, SetStateAction } from "react";
 import { CiSquarePlus, CiSquareMinus } from "react-icons/ci";
+import { scrollbarStyle } from "@/app/utils/helper";
 interface PostCardBaseProps {
   post: post | Comment;
   socket: Socket | null;
@@ -41,9 +42,6 @@ export default function PostCard({
   setVotesLeft,
   votesLeft,
 }: PostCardProps) {
-  const scrollbarStyle =
-    "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
-
   const handleUpVote = () => {
     if (typeof votesLeft === "number" && votesLeft > 0 && setVotesLeft) {
       setVotesLeft((prevState) => prevState - 1);
@@ -118,8 +116,11 @@ export default function PostCard({
           )}
           {!voting && replyable && "comments" in post && (
             <div className="flex flex-row justify-center items-center ml-4">
-              <span className="mr-[8px]">{post.comments.length}</span>
-              <button onClick={onClickReply}>
+              <button
+                onClick={onClickReply}
+                className={"flex flex-row justify-center items-center"}
+              >
+                <span className="mr-[8px]">{post.comments.length}</span>
                 <FaReply />
               </button>
             </div>

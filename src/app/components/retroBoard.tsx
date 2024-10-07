@@ -12,6 +12,7 @@ import AddPostResponse from "@/app/types/addPostResponse";
 import { Socket } from "socket.io-client";
 import User from "@/app/types/user";
 import Comment from "@/app/types/comment";
+import { scrollbarStyle } from "@/app/utils/helper";
 
 interface RetroBoardProps {
   user: User;
@@ -42,9 +43,6 @@ export default function RetroBoard({
   const [voting, setVoting] = useState<boolean>(false);
   const [votesLeft, setVotesLeft] = useState<number>(5);
 
-  const scrollbarStyle =
-    "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
-
   const onVotingClick = () => {
     socket?.emit("start_voting");
   };
@@ -63,6 +61,7 @@ export default function RetroBoard({
   };
 
   useEffect(() => {
+    console.log(user.color);
     const handleStartVote = () => {
       setVoting(true);
     };
@@ -201,6 +200,29 @@ export default function RetroBoard({
     );
   };
 
+  const handleSendComment = (
+    commentText: string,
+    sectionId: number,
+    postId: number,
+  ) => {
+    const newComment: Comment = {
+      id: Date.now(),
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        color: user.color,
+      },
+      text: commentText,
+    };
+
+    socket?.emit("post_comment", {
+      postId: postId,
+      sectionId: sectionId,
+      comment: newComment,
+    });
+  };
+
   return (
     <div className="w-full flex flex-col items-center px-4 sm:px-6 lg:flex-row lg:justify-center lg:items-start overflow-hidden">
       <Snackbar
@@ -326,6 +348,7 @@ export default function RetroBoard({
           socket={socket}
           post={replyTo.post}
           sectionId={replyTo.sectionId}
+          handleSendComment={handleSendComment}
           clearReplyToPost={() => setReplyTo({ post: null, sectionId: null })}
         />
       )}
