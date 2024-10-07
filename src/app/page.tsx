@@ -10,12 +10,11 @@ import {
   SOCKET_SERVER_URL,
 } from "@/app/utils/helper";
 import Section from "@/app/types/section";
-import { generateMultipleSections } from "@/app/__mock__/mockUtils";
 import Board from "@/app/types/board";
 import User from "@/app/types/user";
 
 export default function Home() {
-  const userColor = profileIconColors[randomInteger(0, 20)];
+  const userColor = profileIconColors[randomInteger(0, 19)];
   const [user, setUser] = useState<User>({
     name: "",
     id: "",

@@ -5,24 +5,24 @@ export function randomInteger(min: number, max: number) {
 }
 
 export const profileIconColors: string[] = [
-  "#FF5733", // Red-Orange
-  "#C70039", // Crimson
-  "#FFC300", // Gold
-  "#FF5733", // Tomato
-  "#DAF7A6", // Light Green
-  "#581845", // Purple
-  "#900C3F", // Dark Pink
-  "#FF6F61", // Coral
-  "#4B0082", // Indigo
-  "#FF8C00", // Dark Orange
-  "#28B463", // Green
-  "#3498DB", // Sky Blue
-  "#8E44AD", // Amethyst
-  "#F39C12", // Orange
-  "#E67E22", // Carrot
-  "#1F618D", // Dark Blue
-  "#F1C40F", // Bright Yellow
-  "#D35400", // Pumpkin
-  "#2ECC71", // Emerald
-  "#A569BD", // Lavender
+  "#CC462A",
+  "#9F002F",
+  "#CC9A00",
+  "#CC462A",
+  "#A1C68E",
+  "#471238",
+  "#730A31",
+  "#CC584F",
+  "#3C0068",
+  "#CC7000",
+  "#1F8F39",
+  "#2871A9",
+  "#6F3290",
+  "#C3870F",
+  "#B3661B",
+  "#184A6D",
+  "#C1A107",
+  "#A44300",
+  "#24A05C",
+  "#8D4FA6",
 ];

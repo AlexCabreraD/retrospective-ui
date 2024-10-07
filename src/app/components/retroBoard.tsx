@@ -133,12 +133,12 @@ export default function RetroBoard({
                     ...prevState,
                     post: {
                       ...post,
-                      comments: [...post.comments, data.comment], // Ensure that comments remains of type Comment[]
+                      comments: [...post.comments, data.comment],
                     },
                   }));
                   return {
                     ...post,
-                    comments: [...post.comments, data.comment], // Ensure that comments remains of type Comment[]
+                    comments: [...post.comments, data.comment],
                   };
                 }
 
