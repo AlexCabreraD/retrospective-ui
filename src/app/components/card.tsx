@@ -81,18 +81,18 @@ export default function PostCard({
         </div>
       )}
 
-      <p className="pt-[16px] px-[16px]">{post.text}</p>
+      <p className="pt-[16px] px-[16px] text-body-sm">{post.text}</p>
       <div className="flex flex-row justify-between items-center sticky bottom-0 py-[16px] px-[16px]">
         <div className="flex items-center">
           <div
-            className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full"
+            className="rounded-lg w-[30px] h-[30px] flex justify-center items-center text-body-sm"
             style={{ backgroundColor: post.user.color }}
           >
-            <span className="font-medium text-gray-600 dark:text-gray-300">
+            <span className="font-medium text-gray-600 dark:text-gray-300 text-body-sm">
               {post.user.name[0]}
             </span>
           </div>
-          <span className="ml-[8px]">{post.user.name}</span>
+          <span className="ml-[8px] text-body-sm">{post.user.name}</span>
         </div>
 
         <div className="flex flex-row justify-center items-center cursor-pointer">
@@ -124,7 +124,9 @@ export default function PostCard({
             <div className="flex flex-row justify-center items-center ml-4">
               <button
                 onClick={onClickReply}
-                className={"flex flex-row justify-center items-center"}
+                className={
+                  "flex flex-row justify-center items-center text-body-sm"
+                }
               >
                 <span className="mr-[8px]">{post.comments.length}</span>
                 <FaReply />

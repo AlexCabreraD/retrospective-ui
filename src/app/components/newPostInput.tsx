@@ -43,7 +43,7 @@ const NewPostInput: React.FC<NewPostInputProps> = ({
     !voting && (
       <div>
         {addingNewPost ? (
-          <div className="relative flex flex-col items-center w-full bg-[#1E1E1E] mt-[32px]">
+          <div className="relative flex flex-col items-center w-full bg-[#1E1E1E] mt-[16px]">
             <textarea
               value={newPostText}
               placeholder="Add a new post"
@@ -73,7 +73,7 @@ const NewPostInput: React.FC<NewPostInputProps> = ({
         ) : (
           <button
             onClick={() => setAddingNewPost(true)}
-            className="w-full bg-[#292929] hover:bg-[#FFFFFF] hover:text-black drop-shadow-2xl rounded-lg p-4 text-center text-[#858585] mt-[32px]"
+            className="w-full bg-[#292929] hover:bg-[#FFFFFF] hover:text-black drop-shadow-2xl rounded-lg p-[16px] text-center text-[#858585] mt-[16px] text-body-sm"
           >
             + Add a card
           </button>

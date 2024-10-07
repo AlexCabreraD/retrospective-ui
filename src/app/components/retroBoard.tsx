@@ -46,7 +46,9 @@ export default function RetroBoard({
   const onVotingClick = () => {
     socket?.emit("start_voting");
   };
-
+  const onStopVotingClick = () => {
+    socket?.emit("stop_voting");
+  };
   const handleLeaveBoard = () => {
     leaveBoard();
   };
@@ -61,9 +63,11 @@ export default function RetroBoard({
   };
 
   useEffect(() => {
-    console.log(user.color);
     const handleStartVote = () => {
       setVoting(true);
+    };
+    const handleStopVote = () => {
+      setVoting(false);
     };
     const handlePostAdded = ({
       sectionId,
@@ -153,11 +157,13 @@ export default function RetroBoard({
 
     socket?.on("post_added", handlePostAdded);
     socket?.on("vote_started", handleStartVote);
+    socket?.on("vote_stopped", handleStopVote);
     socket?.on("post_voted_update", updatePostVote);
     socket?.on("post_comments_update", updatePostComments);
     return () => {
       socket?.off("post_added", handlePostAdded);
       socket?.off("vote_started", handleStartVote);
+      socket?.on("vote_stopped", handleStopVote);
       socket?.off("post_voted_update", updatePostVote);
       socket?.off("post_comments_update", updatePostComments);
     };
@@ -248,16 +254,24 @@ export default function RetroBoard({
 
         <div className="flex flex-col sm:flex-row mb-[8px] justify-between">
           <div>
-            {user.role === "creator" && (
+            {user.role === "creator" && voting && (
               <button
                 className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg"
+                onClick={onStopVotingClick}
+              >
+                Stop Vote
+              </button>
+            )}
+            {user.role === "creator" && (
+              <button
+                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm"
                 onClick={onVotingClick}
               >
                 Start Vote
               </button>
             )}
             <button
-              className={`mt-2 sm:mt-0 ${user.role === "creator" ? "sm:ml-2" : ""} border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg`}
+              className={`mt-2 sm:mt-0 ${user.role === "creator" ? "sm:ml-2" : ""} border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm`}
               onClick={() => {
                 setShowConfirmModal(true);
               }}
@@ -303,10 +317,10 @@ export default function RetroBoard({
             >
               <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-h3-lg font-semibold text-[#858585]">
+                  <h2 className="text-h3 font-semibold text-[#858585]">
                     {section.title}
                   </h2>
-                  <div className="rounded-lg border-[2px] border-[#353535] w-10 h-10 flex justify-center items-center ">
+                  <div className="rounded-lg border-[2px] border-[#353535] w-[30px] h-[30px] flex justify-center items-center text-body-sm">
                     <p>{section.posts.length}</p>
                   </div>
                 </div>
@@ -315,7 +329,7 @@ export default function RetroBoard({
                   sectionId={section.id}
                   voting={voting}
                 />
-                <hr className="h-px bg-[#292929] border-0 mt-[32px]" />
+                <hr className="h-px bg-[#292929] border-0 mt-[16px]" />
               </div>
               <div className={"w-full overflow-auto px-4 relative"}>
                 {section.posts
