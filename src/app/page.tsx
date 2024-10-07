@@ -20,15 +20,18 @@ export default function Home() {
     name: "",
     id: "",
     role: "",
-    color: userColor,
+    color: "",
   });
   const [displayName, setDisplayName] = useState<string>("");
   const [isInRoom, setIsInRoom] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  const mockSections = generateMultipleSections(4, 0);
-  const [sections, setSections] = useState<Section[]>(mockSections);
+  const [sections, setSections] = useState<Section[]>([]);
   const [board, setBoard] = useState<Board | null>(null);
+
+  useEffect(() => {
+    setUser((prevState) => ({ ...prevState, color: userColor }));
+  }, [userColor]);
 
   useEffect(() => {
     const socketInstance = io(SOCKET_SERVER_URL);

@@ -2,11 +2,14 @@ import { FaReply } from "react-icons/fa6";
 import post from "@/app/types/post";
 import Comment from "@/app/types/comment";
 import { Socket } from "socket.io-client";
-
+import { Dispatch, SetStateAction } from "react";
+import { CiSquarePlus, CiSquareMinus } from "react-icons/ci";
 interface PostCardBaseProps {
   post: post | Comment;
   socket: Socket | null;
-  sectionId: number;
+  sectionId?: number;
+  votesLeft?: number;
+  setVotesLeft?: Dispatch<SetStateAction<number>>;
   className?: string;
   replyable?: boolean;
   voting?: boolean;
@@ -15,6 +18,8 @@ interface PostCardBaseProps {
 interface PostCardWithReply extends PostCardBaseProps {
   replyable: true;
   onClickReply: () => void;
+  votesLeft: number;
+  setVotesLeft: Dispatch<SetStateAction<number>>;
   voting: boolean;
 }
 
@@ -33,23 +38,44 @@ export default function PostCard({
   voting = false,
   socket,
   sectionId,
+  setVotesLeft,
+  votesLeft,
 }: PostCardProps) {
   const scrollbarStyle =
     "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
 
   const handleUpVote = () => {
-    socket?.emit("upvote_post", { postId: post.id, sectionId: sectionId });
+    if (typeof votesLeft === "number" && votesLeft > 0 && setVotesLeft) {
+      setVotesLeft((prevState) => prevState - 1);
+      socket?.emit("upvote_post", { postId: post.id, sectionId: sectionId });
+    }
+  };
+
+  const handleUndoVote = () => {
+    if (
+      typeof votesLeft === "number" &&
+      votesLeft < 5 &&
+      setVotesLeft &&
+      "comments" in post &&
+      post.likeCount > 0
+    ) {
+      setVotesLeft((prevState) => prevState + 1);
+      socket?.emit("undo_upvote_post", {
+        postId: post.id,
+        sectionId: sectionId,
+      });
+    }
   };
 
   return (
     <div
       id={String(post.id)}
-      className={`bg-[#292929] max-h-[200px] rounded-[10px] z-1  ${scrollbarStyle} ${className} `}
+      className={`bg-[#292929] max-h-[200px] rounded-[10px] z-1 ${scrollbarStyle} ${className} relative`}
     >
       {voting && "likeCount" in post && (
         <div className="absolute right-[8px] top-[8px] w-[30px] h-[30px] flex items-center justify-center">
           <span
-            className="min-w-[30px] w-[30px] h-[30px] flex items-center justify-center font-bold border-[2px] border-[#353535] rounded bg-[#1E1E1E] text-center"
+            className="min-w-[30px] w-[30px] h-[30px] flex items-center justify-center font-bold  border-[#353535] rounded bg-[#1E1E1E] text-center"
             style={{ lineHeight: "30px", padding: "0 2px" }}
           >
             {post.likeCount}
@@ -72,13 +98,23 @@ export default function PostCard({
         </div>
 
         <div className="flex flex-row justify-center items-center cursor-pointer">
-          {voting && (
-            <button
-              className="flex translate-y-[16px] translate-x-[10px] border-[1px] border-white rounded-full px-[8px]"
-              onClick={handleUpVote}
-            >
-              <span>+</span>
-            </button>
+          {voting ? (
+            <>
+              <button
+                className="flex translate-y-[16px] translate-x-[10px]"
+                onClick={handleUndoVote}
+              >
+                <CiSquareMinus size={35} />
+              </button>
+              <button
+                className="flex translate-y-[16px] translate-x-[10px]"
+                onClick={handleUpVote}
+              >
+                <CiSquarePlus size={35} />
+              </button>
+            </>
+          ) : (
+            <div></div>
           )}
           {!voting && replyable && "comments" in post && (
             <div className="flex flex-row justify-center items-center ml-4">

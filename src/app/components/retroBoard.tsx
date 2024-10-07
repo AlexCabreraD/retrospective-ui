@@ -11,6 +11,7 @@ import Board from "@/app/types/board";
 import AddPostResponse from "@/app/types/addPostResponse";
 import { Socket } from "socket.io-client";
 import User from "@/app/types/user";
+import Comment from "@/app/types/comment";
 
 interface RetroBoardProps {
   user: User;
@@ -33,9 +34,13 @@ export default function RetroBoard({
   leaveBoard,
 }: RetroBoardProps) {
   const [showSnack, setShowSnack] = useState<boolean>(false);
-  const [replyTo, setReplyTo] = useState<post | null>(null);
+  const [replyTo, setReplyTo] = useState<{
+    post: post | null;
+    sectionId: number | null;
+  }>({ post: null, sectionId: null });
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
+  const [votesLeft, setVotesLeft] = useState<number>(5);
 
   const scrollbarStyle =
     "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";
@@ -84,8 +89,7 @@ export default function RetroBoard({
         console.log("didnt find section");
       }
     };
-
-    const updateUpvotedPost = (data: {
+    const updatePostVote = (data: {
       likeCount: number;
       postId: number;
       sectionId: number;
@@ -110,14 +114,53 @@ export default function RetroBoard({
       );
     };
 
+    const updatePostComments = (data: {
+      comment: Comment;
+      postId: number;
+      sectionId: number;
+    }) => {
+      console.log("searching...");
+      setSections((prevSections) =>
+        prevSections.map((section) => {
+          if (section.id === data.sectionId) {
+            console.log("section");
+            return {
+              ...section,
+              posts: section.posts.map((post) => {
+                if (post.id === data.postId) {
+                  console.log(post);
+                  setReplyTo((prevState) => ({
+                    ...prevState,
+                    post: {
+                      ...post,
+                      comments: [...post.comments, data.comment], // Ensure that comments remains of type Comment[]
+                    },
+                  }));
+                  return {
+                    ...post,
+                    comments: [...post.comments, data.comment], // Ensure that comments remains of type Comment[]
+                  };
+                }
+
+                return post;
+              }),
+            };
+          }
+
+          return section;
+        }),
+      );
+    };
+
     socket?.on("post_added", handlePostAdded);
     socket?.on("vote_started", handleStartVote);
-    socket?.on("post_upvoted", updateUpvotedPost);
-
+    socket?.on("post_voted_update", updatePostVote);
+    socket?.on("post_comments_update", updatePostComments);
     return () => {
       socket?.off("post_added", handlePostAdded);
       socket?.off("vote_started", handleStartVote);
-      socket?.off("post_upvoted", updateUpvotedPost);
+      socket?.off("post_voted_update", updatePostVote);
+      socket?.off("post_comments_update", updatePostComments);
     };
   }, [setSections, socket, setBoard, board]);
 
@@ -181,23 +224,50 @@ export default function RetroBoard({
           </Tooltip>
         </div>
 
-        <div className="flex flex-col sm:flex-row mb-[8px]">
-          {user.role === "creator" && (
+        <div className="flex flex-col sm:flex-row mb-[8px] justify-between">
+          <div>
+            {user.role === "creator" && (
+              <button
+                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg"
+                onClick={onVotingClick}
+              >
+                Start Vote
+              </button>
+            )}
             <button
-              className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg"
-              onClick={onVotingClick}
+              className={`mt-2 sm:mt-0 ${user.role === "creator" ? "sm:ml-2" : ""} border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg`}
+              onClick={() => {
+                setShowConfirmModal(true);
+              }}
             >
-              Start Vote
+              Leave
             </button>
-          )}
-          <button
-            className={`mt-2 sm:mt-0 ${user.role === "creator" ? "sm:ml-2" : ""} border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg`}
-            onClick={() => {
-              setShowConfirmModal(true);
-            }}
-          >
-            Leave
-          </button>
+          </div>
+          <div>
+            {voting && (
+              <div
+                className={
+                  "flex justify-center text-center align-middle content-center"
+                }
+              >
+                <span
+                  className={
+                    "flex items-center justify-center font-bold text-center mr-[8px]"
+                  }
+                >
+                  votes:
+                </span>
+                <div className="w-[30px] h-[30px] flex items-center justify-center">
+                  <span
+                    className="min-w-[30px] w-[30px] h-[30px] flex items-center justify-center font-bold border-[2px] border-[#353535] rounded bg-[#1E1E1E] text-center"
+                    style={{ lineHeight: "30px", padding: "0 2px" }}
+                  >
+                    {votesLeft}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div
@@ -234,10 +304,14 @@ export default function RetroBoard({
                       key={post.id}
                       post={post}
                       className="mt-4"
-                      onClickReply={() => setReplyTo(post)}
+                      onClickReply={() =>
+                        setReplyTo({ post: post, sectionId: section.id })
+                      }
                       voting={voting}
                       socket={socket}
                       sectionId={section.id}
+                      votesLeft={votesLeft}
+                      setVotesLeft={setVotesLeft}
                       replyable
                     />
                   ))}
@@ -247,10 +321,12 @@ export default function RetroBoard({
         </div>
       </div>
 
-      {replyTo && (
+      {replyTo.post && replyTo.sectionId && (
         <CommentModal
-          post={replyTo}
-          clearReplyToPost={() => setReplyTo(null)}
+          socket={socket}
+          post={replyTo.post}
+          sectionId={replyTo.sectionId}
+          clearReplyToPost={() => setReplyTo({ post: null, sectionId: null })}
         />
       )}
       {showConfirmModal && (
