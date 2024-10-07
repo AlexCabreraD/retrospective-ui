@@ -102,13 +102,19 @@ export default function PostCard({
                 className="flex translate-y-[16px] translate-x-[10px]"
                 onClick={handleUndoVote}
               >
-                <CiSquareMinus size={35} />
+                <CiSquareMinus
+                  size={35}
+                  className={"text-[#858585] hover:text-white"}
+                />
               </button>
               <button
                 className="flex translate-y-[16px] translate-x-[10px]"
                 onClick={handleUpVote}
               >
-                <CiSquarePlus size={35} />
+                <CiSquarePlus
+                  size={35}
+                  className={"text-[#858585] hover:text-white"}
+                />
               </button>
             </>
           ) : (
