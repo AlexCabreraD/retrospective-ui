@@ -13,6 +13,7 @@ import { Socket } from "socket.io-client";
 import User from "@/app/types/user";
 import Comment from "@/app/types/comment";
 import { scrollbarStyle } from "@/app/utils/helper";
+import { SnackBar } from "@/app/types/snackBar";
 
 interface RetroBoardProps {
   user: User;
@@ -42,7 +43,7 @@ export default function RetroBoard({
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
   const [votesLeft, setVotesLeft] = useState<number>(5);
-
+  const [snackBar, setSnackBar] = useState<SnackBar>();
   const onVotingClick = () => {
     socket?.emit("start_voting");
   };
@@ -256,7 +257,7 @@ export default function RetroBoard({
           <div>
             {user.role === "creator" && voting && (
               <button
-                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg"
+                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm mr-[8px]"
                 onClick={onStopVotingClick}
               >
                 Stop Vote
