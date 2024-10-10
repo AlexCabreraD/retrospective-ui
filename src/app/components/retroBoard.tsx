@@ -44,6 +44,7 @@ export default function RetroBoard({
   const [voting, setVoting] = useState<boolean>(false);
   const [votesLeft, setVotesLeft] = useState<number>(5);
   const [snackBar, setSnackBar] = useState<SnackBar>();
+
   const onVotingClick = () => {
     socket?.emit("start_voting");
   };
@@ -260,19 +261,28 @@ export default function RetroBoard({
                 className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm mr-[8px]"
                 onClick={onStopVotingClick}
               >
-                Stop Vote
+                Back
               </button>
             )}
-            {user.role === "creator" && (
+            {user.role === "creator" && voting && (
               <button
-                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm"
+                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm mr-2"
+                onClick={onStopVotingClick}
+              >
+                Review
+              </button>
+            )}
+            {user.role === "creator" && !voting && (
+              <button
+                className="mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm mr-2"
                 onClick={onVotingClick}
               >
                 Start Vote
               </button>
             )}
+
             <button
-              className={`mt-2 sm:mt-0 ${user.role === "creator" ? "sm:ml-2" : ""} border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm`}
+              className={`mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm`}
               onClick={() => {
                 setShowConfirmModal(true);
               }}
@@ -307,54 +317,71 @@ export default function RetroBoard({
           </div>
         </div>
 
-        <div
-          className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full overflow-hidden "
-          id={"cards"}
-        >
-          {sections?.map((section) => (
-            <div
-              key={section.id}
-              className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}
-            >
-              <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
-                <div className="flex justify-between items-center">
-                  <h2 className="text-h3 font-semibold text-[#858585]">
-                    {section.title}
-                  </h2>
-                  <div className="rounded-lg border-[2px] border-[#353535] w-[30px] h-[30px] flex justify-center items-center text-body-sm">
-                    <p>{section.posts.length}</p>
-                  </div>
-                </div>
-                <NewPostInput
-                  onPost={handleNewPost}
-                  sectionId={section.id}
-                  voting={voting}
-                />
-                <hr className="h-px bg-[#292929] border-0 mt-[16px]" />
-              </div>
-              <div className={"w-full overflow-auto px-4 relative"}>
-                {section.posts
-                  .slice()
-                  .sort((a, b) => b.id - a.id)
-                  .map((post) => (
-                    <Card
-                      key={post.id}
-                      post={post}
-                      className="mt-4"
-                      onClickReply={() =>
-                        setReplyTo({ post: post, sectionId: section.id })
-                      }
-                      voting={voting}
-                      socket={socket}
-                      sectionId={section.id}
-                      votesLeft={votesLeft}
-                      setVotesLeft={setVotesLeft}
-                      replyable
-                    />
-                  ))}
-              </div>
+        {/*<div*/}
+        {/*  className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full overflow-hidden "*/}
+        {/*  id={"cards"}*/}
+        {/*>*/}
+        {/*  {sections?.map((section) => (*/}
+        {/*    <div*/}
+        {/*      key={section.id}*/}
+        {/*      className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}*/}
+        {/*    >*/}
+        {/*      <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>*/}
+        {/*        <div className="flex justify-between items-center">*/}
+        {/*          <h2 className="text-h3 font-semibold text-[#858585]">*/}
+        {/*            {section.title}*/}
+        {/*          </h2>*/}
+        {/*          <div className="rounded-lg border-[2px] border-[#353535] w-[30px] h-[30px] flex justify-center items-center text-body-sm">*/}
+        {/*            <p>{section.posts.length}</p>*/}
+        {/*          </div>*/}
+        {/*        </div>*/}
+        {/*        <NewPostInput*/}
+        {/*          onPost={handleNewPost}*/}
+        {/*          sectionId={section.id}*/}
+        {/*          voting={voting}*/}
+        {/*        />*/}
+        {/*        <hr className="h-px bg-[#292929] border-0 mt-[16px]" />*/}
+        {/*      </div>*/}
+        {/*      <div className={"w-full overflow-auto px-4 relative"}>*/}
+        {/*        {section.posts*/}
+        {/*          .slice()*/}
+        {/*          .sort((a, b) => b.id - a.id)*/}
+        {/*          .map((post) => (*/}
+        {/*            <Card*/}
+        {/*              key={post.id}*/}
+        {/*              post={post}*/}
+        {/*              className="mt-4"*/}
+        {/*              onClickReply={() =>*/}
+        {/*                setReplyTo({ post: post, sectionId: section.id })*/}
+        {/*              }*/}
+        {/*              voting={voting}*/}
+        {/*              socket={socket}*/}
+        {/*              sectionId={section.id}*/}
+        {/*              votesLeft={votesLeft}*/}
+        {/*              setVotesLeft={setVotesLeft}*/}
+        {/*              replyable*/}
+        {/*            />*/}
+        {/*          ))}*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*  )) ?? <div>No sections available</div>}*/}
+        {/*</div>*/}
+        <div className={"flex"}>
+          <div
+            className={"bg-[#1e1e1e] p-[16px] mr-[32px] rounded min-w-[480px]"}
+          >
+            <div className={"flex justify-between w-full"}>
+              <span className={"text-h2-sm"}>Cards</span>
+              <button
+                className={`mt-2 sm:mt-0 border-[1px] hover:bg-[#1f1f1f] px-4 py-1 rounded-lg text-body-sm`}
+              >
+                Next
+              </button>
             </div>
-          )) ?? <div>No sections available</div>}
+          </div>
+          <div className={"bg-[#1e1e1e] p-[16px] rounded min-w-[682px]"}>
+            test
+          </div>
         </div>
       </div>
 
