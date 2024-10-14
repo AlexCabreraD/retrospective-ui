@@ -1,3 +1,8 @@
+import Board from "../types/board";
+import Post from "../types/post";
+import PostWithSectionTitle from "../types/postWithSectionTitle";
+import Section from "../types/section";
+
 export const SOCKET_SERVER_URL: string = "http://localhost:8080";
 
 export const scrollbarStyle =
@@ -29,3 +34,18 @@ export const profileIconColors: string[] = [
   "#24A05C",
   "#8D4FA6",
 ];
+
+export const gatherAndSortPostsWithSectionTitle = (sections: Section[]): PostWithSectionTitle[] => {
+  const allPostsWithSectionTitle: PostWithSectionTitle[] = sections.flatMap((section: Section) =>
+      section.posts.map((post: Post) => ({
+        post: post,
+        sectionTitle: section.title,
+      }))
+  );
+
+  const sortedPostsWithSectionTitle: PostWithSectionTitle[] = allPostsWithSectionTitle.sort(
+      (a: PostWithSectionTitle, b: PostWithSectionTitle) => b.post.likeCount - a.post.likeCount
+  );
+
+  return sortedPostsWithSectionTitle;
+};
