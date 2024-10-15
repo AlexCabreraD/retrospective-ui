@@ -1,6 +1,6 @@
 import Post from "./post";
 
 export default interface PostWithSectionTitle {
-    post: Post;
-    sectionTitle: string;
+  post: Post;
+  sectionTitle: string;
 }

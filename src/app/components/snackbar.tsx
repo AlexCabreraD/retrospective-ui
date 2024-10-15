@@ -5,7 +5,7 @@ interface SnackbarProps {
   text: string;
   status?: "success" | "info" | "warning" | "error" | null;
   onClose: () => void;
-  onOpen: () => void;
+  onOpen?: () => void;
 }
 
 export function Snackbar({
@@ -32,7 +32,7 @@ export function Snackbar({
 
   useEffect(() => {
     if (visible) {
-      onOpen();
+      if (onOpen) onOpen();
       const timer = setTimeout(() => {
         onClose();
       }, 3000);
