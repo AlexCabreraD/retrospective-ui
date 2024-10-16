@@ -52,17 +52,10 @@ export default function RetroBoard({
   const [snackBar, setSnackBar] = useState<SnackBar>();
 
   const [sortedPosts, setSortedPosts] = useState<PostWithSectionTitle[]>([]);
-  const [postUnderReview, setPostUnderReview] = useState<post | null>(null);
+  const [postUnderReview, setPostUnderReview] = useState<PostWithSectionTitle | null>(null);
 
   const handleNextClick = () => {
-    setSortedPosts((prevSortedPosts) => {
-      const sortedPostsTemp = [...prevSortedPosts];
-      const nextPost = sortedPostsTemp.shift();
-      if (nextPost) {
-        setPostUnderReview(nextPost.post);
-      }
-      return sortedPostsTemp;
-    });
+    socket?.emit("next_post")
   };
 
   const onVotingClick = () => {
@@ -188,12 +181,23 @@ export default function RetroBoard({
         const sortedPostsTemp = gatherAndSortPostsWithSectionTitle(prevSections);
         const nextPost = sortedPostsTemp.shift();
         setSortedPosts(sortedPostsTemp);
-        if (nextPost) setPostUnderReview(nextPost.post);
+        if (nextPost) setPostUnderReview(nextPost);
         return prevSections;
       });
 
       setVoting(false);
       setReviewing(true);
+    }
+
+    const handleNextPost = () =>{
+      setSortedPosts((prevSortedPosts) => {
+        const sortedPostsTemp = [...prevSortedPosts];
+        const nextPost = sortedPostsTemp.shift();
+        if (nextPost) {
+          setPostUnderReview(nextPost);
+        }
+        return sortedPostsTemp;
+      });
     }
 
     socket?.on("post_added", handlePostAdded);
@@ -202,6 +206,7 @@ export default function RetroBoard({
     socket?.on("post_voted_update", updatePostVote);
     socket?.on("post_comments_update", updatePostComments);
     socket?.on("review_started", handleStartReview);
+    socket?.on("next_post", handleNextPost);
     return () => {
       socket?.off("post_added", handlePostAdded);
       socket?.off("vote_started", handleStartVote);
@@ -209,6 +214,7 @@ export default function RetroBoard({
       socket?.off("post_voted_update", updatePostVote);
       socket?.off("post_comments_update", updatePostComments);
       socket?.off("review_started", handleStartReview);
+      socket?.off("next_post", handleNextPost);
     };
   }, [setSections, socket, setBoard, board]);
 
