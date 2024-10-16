@@ -35,30 +35,30 @@ export default function CommentModal({
     setCommentText("");
     handleSendComment(commentText, sectionId, post.id);
   };
+
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 sm:hidden">
-        <div className="relative w-full sm:w-[500px] max-h-[90vh] sm:max-h-[600px] bg-[#1E1E1E] rounded-lg overflow-hidden">
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="relative w-full max-w-[600px] h-[90vh] bg-[#1E1E1E] rounded-lg flex flex-col">
           <button
             type="button"
-            className="bg-[#292929] h-8 w-full rounded-t-md p-2 inline-flex items-center justify-center text-[#858585] hover:bg-white"
+            className="bg-[#292929] h-8 rounded-t-md p-2 inline-flex items-center justify-center text-[#858585] hover:bg-white"
             onClick={clearReplyToPost}
           >
             Close
           </button>
 
-          <div
-            className={`p-4 pt-8 flex-grow overflow-y-auto ${scrollbarStyle}`}
-          >
+          <div className="p-4">
             <Card
               post={post}
               sectionId={sectionId}
               key={post.id}
-              className="mb-8"
               socket={socket}
             />
-            <hr className="h-px bg-[#292929] border-0 mb-8" />
+          </div>
 
+          <div className={`flex-grow overflow-y-auto px-4 ${scrollbarStyle}`}>
+            <hr className="h-px bg-[#292929] border-0 mb-4" />
             {post.comments.map((comment: Comment) => (
               <Card
                 key={comment.id}
@@ -69,10 +69,11 @@ export default function CommentModal({
             ))}
           </div>
 
-          <div className="flex flex-row items-center w-full bg-[#1E1E1E] p-4">
+          <div className="p-4 bg-[#1E1E1E] flex items-center">
             <input
               placeholder="Reply"
               className="w-full bg-[#292929] h-12 rounded mr-4 placeholder:text-[#858585] px-4"
+              value={commentText}
               onKeyDown={(event) => {
                 if (event.key === "Enter") {
                   handleSendClick();
@@ -84,46 +85,6 @@ export default function CommentModal({
               <IoSend size={25} />
             </button>
           </div>
-        </div>
-      </div>
-
-      <div className="hidden sm:flex flex-col h-screen w-full sm:w-[500px] bg-[#1E1E1E] overflow-hidden rounded-lg relative">
-        <button
-          type="button"
-          className="bg-[#292929] h-8 rounded-t-md p-2 inline-flex items-center justify-center text-[#858585] hover:bg-white"
-          onClick={clearReplyToPost}
-        >
-          Close
-        </button>
-        <div className={`p-4 pt-8 flex-grow overflow-y-auto ${scrollbarStyle}`}>
-          <Card key={post.id} post={post} socket={null} className="mb-8" />
-          <hr className="h-px bg-[#292929] border-0 mb-8" />
-
-          {post.comments.map((comment: Comment) => (
-            <Card
-              key={comment.id}
-              post={comment}
-              socket={null}
-              className="mt-4"
-            />
-          ))}
-        </div>
-
-        <div className="flex flex-row items-center w-full bg-[#1E1E1E] p-4">
-          <input
-            placeholder="Reply"
-            className="w-full bg-[#292929] h-12 rounded mr-4 placeholder:text-[#858585] px-4"
-            value={commentText}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                handleSendClick();
-              }
-            }}
-            onChange={(e) => setCommentText(e.target.value)}
-          />
-          <button className="border-0" onClick={handleSendClick}>
-            <IoSend size={25} />
-          </button>
         </div>
       </div>
     </>

@@ -7,9 +7,7 @@ import AddPostResponse from "@/app/types/addPostResponse";
 import { Socket } from "socket.io-client";
 import User from "@/app/types/user";
 import Comment from "@/app/types/comment";
-import {
-  gatherAndSortPostsWithSectionTitle,
-} from "@/app/utils/helper";
+import { gatherAndSortPostsWithSectionTitle } from "@/app/utils/helper";
 import { SnackBar } from "@/app/types/snackBar";
 import PostWithSectionTitle from "../types/postWithSectionTitle";
 import SnackbarComponent from "./retroBoard/snackBarComponent";
@@ -52,10 +50,15 @@ export default function RetroBoard({
   const [snackBar, setSnackBar] = useState<SnackBar>();
 
   const [sortedPosts, setSortedPosts] = useState<PostWithSectionTitle[]>([]);
-  const [postUnderReview, setPostUnderReview] = useState<PostWithSectionTitle | null>(null);
+  const [postUnderReview, setPostUnderReview] =
+    useState<PostWithSectionTitle | null>(null);
+
+  useEffect(() => {
+    console.log(replyTo, "reply");
+  }, [replyTo]);
 
   const handleNextClick = () => {
-    socket?.emit("next_post")
+    socket?.emit("next_post");
   };
 
   const onVotingClick = () => {
@@ -64,7 +67,7 @@ export default function RetroBoard({
 
   const onStartReviewClick = () => {
     socket?.emit("start_review");
-  }
+  };
 
   const onStopVotingClick = () => {
     setVoting(false);
@@ -176,9 +179,10 @@ export default function RetroBoard({
       );
     };
 
-    const handleStartReview = () =>{
+    const handleStartReview = () => {
       setSections((prevSections) => {
-        const sortedPostsTemp = gatherAndSortPostsWithSectionTitle(prevSections);
+        const sortedPostsTemp =
+          gatherAndSortPostsWithSectionTitle(prevSections);
         const nextPost = sortedPostsTemp.shift();
         setSortedPosts(sortedPostsTemp);
         if (nextPost) setPostUnderReview(nextPost);
@@ -187,18 +191,20 @@ export default function RetroBoard({
 
       setVoting(false);
       setReviewing(true);
-    }
+    };
 
-    const handleNextPost = () =>{
+    const handleNextPost = () => {
       setSortedPosts((prevSortedPosts) => {
         const sortedPostsTemp = [...prevSortedPosts];
         const nextPost = sortedPostsTemp.shift();
         if (nextPost) {
-          setPostUnderReview(nextPost);
+          setPostUnderReview((prevState) => {
+            return nextPost;
+          });
         }
         return sortedPostsTemp;
       });
-    }
+    };
 
     socket?.on("post_added", handlePostAdded);
     socket?.on("vote_started", handleStartVote);

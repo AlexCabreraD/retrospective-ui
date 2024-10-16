@@ -23,6 +23,7 @@ interface PostCardWithReply extends PostCardBaseProps {
   onClickReply: Dispatch<
     SetStateAction<{ post: Post | null; sectionId: number | null }>
   >;
+  sectionId: number;
   votesLeft: number;
   setVotesLeft: Dispatch<SetStateAction<number>>;
   voting: boolean;
@@ -106,7 +107,11 @@ export default function PostCard({
             {!voting && replyable && "comments" in post && (
               <div className="flex flex-row justify-center items-center ml-4">
                 <button
-                  onClick={() => onClickReply}
+                  onClick={() => {
+                    if (onClickReply) {
+                      onClickReply({ post: post, sectionId: sectionId });
+                    }
+                  }}
                   className={
                     "flex flex-row justify-center items-center text-body-sm"
                   }
