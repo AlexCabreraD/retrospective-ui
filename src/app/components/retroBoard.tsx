@@ -1,10 +1,5 @@
-import Card from "@/app/components/card";
-import CommentModal from "@/app/components/commentModal";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import post from "@/app/types/post";
-import { Tooltip } from "@/app/components/tooltip";
-import { Snackbar } from "@/app/components/snackbar";
-import NewPostInput from "@/app/components/newPostInput";
 import Post from "@/app/types/post";
 import Section from "@/app/types/section";
 import Board from "@/app/types/board";
@@ -14,7 +9,6 @@ import User from "@/app/types/user";
 import Comment from "@/app/types/comment";
 import {
   gatherAndSortPostsWithSectionTitle,
-  scrollbarStyle,
 } from "@/app/utils/helper";
 import { SnackBar } from "@/app/types/snackBar";
 import PostWithSectionTitle from "../types/postWithSectionTitle";
@@ -75,14 +69,9 @@ export default function RetroBoard({
     socket?.emit("start_voting");
   };
 
-  const startReview = () => {
-    const sortedPostsTemp = gatherAndSortPostsWithSectionTitle(sections);
-    const nextPost = sortedPostsTemp.shift();
-    setSortedPosts(sortedPostsTemp);
-    if (nextPost) setPostUnderReview(nextPost.post);
-    setVoting(false);
-    setReviewing(true);
-  };
+  const onStartReviewClick = () => {
+    socket?.emit("start_review");
+  }
 
   const onStopVotingClick = () => {
     setVoting(false);
@@ -194,17 +183,32 @@ export default function RetroBoard({
       );
     };
 
+    const handleStartReview = () =>{
+      setSections((prevSections) => {
+        const sortedPostsTemp = gatherAndSortPostsWithSectionTitle(prevSections);
+        const nextPost = sortedPostsTemp.shift();
+        setSortedPosts(sortedPostsTemp);
+        if (nextPost) setPostUnderReview(nextPost.post);
+        return prevSections;
+      });
+
+      setVoting(false);
+      setReviewing(true);
+    }
+
     socket?.on("post_added", handlePostAdded);
     socket?.on("vote_started", handleStartVote);
     socket?.on("vote_stopped", handleStopVote);
     socket?.on("post_voted_update", updatePostVote);
     socket?.on("post_comments_update", updatePostComments);
+    socket?.on("review_started", handleStartReview);
     return () => {
       socket?.off("post_added", handlePostAdded);
       socket?.off("vote_started", handleStartVote);
       socket?.on("vote_stopped", handleStopVote);
       socket?.off("post_voted_update", updatePostVote);
       socket?.off("post_comments_update", updatePostComments);
+      socket?.off("review_started", handleStartReview);
     };
   }, [setSections, socket, setBoard, board]);
 
@@ -279,14 +283,12 @@ export default function RetroBoard({
           boardCode={board?.boardCode}
           votesLeft={votesLeft}
           onCopyClick={onCopyClick}
-          onStopVotingClick={onStopVotingClick}
-          startReview={startReview}
         />
 
         <ActionButtons
           user={user}
           voting={voting}
-          startReview={startReview}
+          startReview={onStartReviewClick}
           onStopVotingClick={onStopVotingClick}
           onVotingClick={onVotingClick}
           setShowConfirmModal={setShowConfirmModal}

@@ -5,8 +5,6 @@ interface boardHeaderProps {
   boardName: string | undefined;
   boardCode: string | undefined;
   votesLeft: number;
-  onStopVotingClick: () => void;
-  startReview: () => void;
   voting: boolean;
   onCopyClick: () => void;
 }
@@ -16,8 +14,6 @@ const BoardHeader = ({
   boardCode,
   votesLeft,
   onCopyClick,
-  onStopVotingClick,
-  startReview,
   voting,
 }: boardHeaderProps) => {
   return (
