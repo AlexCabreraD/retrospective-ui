@@ -45,7 +45,7 @@ export default function RetroBoard({
   }>({ post: null, sectionId: null });
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
-  const [votesLeft, setVotesLeft] = useState<number>(5);
+  const [votesLeft, setVotesLeft] = useState<number>(10);
   const [reviewing, setReviewing] = useState(false);
   const [snackBar, setSnackBar] = useState<SnackBar>();
 

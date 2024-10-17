@@ -126,7 +126,7 @@ export default function Landing({
               placeholder={"Your Name"}
               value={displayName}
               onKeyDown={(event) => {
-                if (event.key === "Enter") {
+                if (event.key === "Enter" && displayName.length > 1 ) {
                   onSetName();
                 }
               }}
@@ -160,7 +160,7 @@ export default function Landing({
                 "bg-[#1e1e1e] placeholder:text-[#4e4e4e] px-[8px] py-[16px] rounded-[5px] w-full mt-[8px]"
               }
               onKeyDown={(event) => {
-                if (event.key === "Enter") {
+                if (event.key === "Enter" && boardName.length > 2) {
                   handleCreateBoardClick();
                 }
               }}
