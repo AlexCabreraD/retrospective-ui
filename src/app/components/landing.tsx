@@ -126,7 +126,7 @@ export default function Landing({
               placeholder={"Your Name"}
               value={displayName}
               onKeyDown={(event) => {
-                if (event.key === "Enter" && displayName.length > 1 ) {
+                if (event.key === "Enter" && displayName.length > 1) {
                   onSetName();
                 }
               }}

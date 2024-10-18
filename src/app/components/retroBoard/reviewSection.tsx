@@ -10,6 +10,11 @@ interface ReviewSectionProps {
   postUnderReview: PostWithSectionTitle | null;
   socket: Socket | null;
   handleNextClick: () => void;
+  handleSendComment: (
+    commentText: string,
+    sectionId: number,
+    postId: number,
+  ) => void;
 }
 
 const ReviewSection = ({
@@ -17,6 +22,7 @@ const ReviewSection = ({
   postUnderReview,
   handleNextClick,
   socket,
+  handleSendComment,
 }: ReviewSectionProps) => {
   const [commentText, setCommentText] = useState<string>("");
 
@@ -25,7 +31,14 @@ const ReviewSection = ({
   };
 
   const handleSendClick = () => {
-    alert("Feature under construction.");
+    if (commentText.trim()) {
+      handleSendComment(
+        commentText,
+        postUnderReview?.sectionId ?? 0,
+        postUnderReview?.post.id ?? 0,
+      );
+      setCommentText("");
+    }
   };
 
   const renderSortedPosts = () => {

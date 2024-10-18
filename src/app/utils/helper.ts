@@ -1,4 +1,3 @@
-import Board from "../types/board";
 import Post from "../types/post";
 import PostWithSectionTitle from "../types/postWithSectionTitle";
 import Section from "../types/section";
@@ -43,6 +42,7 @@ export const gatherAndSortPostsWithSectionTitle = (
       section.posts.map((post: Post) => ({
         post: post,
         sectionTitle: section.title,
+        sectionId: section.id,
       })),
   );
 

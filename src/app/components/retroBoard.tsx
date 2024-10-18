@@ -45,17 +45,13 @@ export default function RetroBoard({
   }>({ post: null, sectionId: null });
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [voting, setVoting] = useState<boolean>(false);
-  const [votesLeft, setVotesLeft] = useState<number>(10);
+  const [votesLeft, setVotesLeft] = useState<number>(5);
   const [reviewing, setReviewing] = useState(false);
   const [snackBar, setSnackBar] = useState<SnackBar>();
 
   const [sortedPosts, setSortedPosts] = useState<PostWithSectionTitle[]>([]);
   const [postUnderReview, setPostUnderReview] =
     useState<PostWithSectionTitle | null>(null);
-
-  useEffect(() => {
-    console.log(replyTo, "reply");
-  }, [replyTo]);
 
   const handleNextClick = () => {
     socket?.emit("next_post");
@@ -146,16 +142,25 @@ export default function RetroBoard({
       postId: number;
       sectionId: number;
     }) => {
-      console.log("searching...");
       setSections((prevSections) =>
         prevSections.map((section) => {
           if (section.id === data.sectionId) {
-            console.log("section");
             return {
               ...section,
               posts: section.posts.map((post) => {
                 if (post.id === data.postId) {
-                  console.log(post);
+                  setPostUnderReview((prevPostUnderReview) => {
+                    if (prevPostUnderReview?.post.id === data.postId) {
+                      return {
+                        ...prevPostUnderReview,
+                        post: {
+                          ...prevPostUnderReview.post,
+                          comments: [...prevPostUnderReview.post.comments, data.comment],
+                        },
+                      };
+                    }
+                    return prevPostUnderReview;
+                  });
                   setReplyTo((prevState) => ({
                     ...prevState,
                     post: {
@@ -168,7 +173,6 @@ export default function RetroBoard({
                     comments: [...post.comments, data.comment],
                   };
                 }
-
                 return post;
               }),
             };
@@ -321,6 +325,7 @@ export default function RetroBoard({
             sortedPosts={sortedPosts}
             postUnderReview={postUnderReview}
             handleNextClick={handleNextClick}
+            handleSendComment={handleSendComment}
             socket={socket}
           />
         )}

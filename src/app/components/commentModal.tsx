@@ -27,10 +27,6 @@ export default function CommentModal({
 }: CommentModalProps) {
   const [commentText, setCommentText] = useState<string>("");
 
-  useEffect(() => {
-    console.log("update comments", post.comments);
-  }, [post.comments]);
-
   const handleSendClick = () => {
     setCommentText("");
     handleSendComment(commentText, sectionId, post.id);
