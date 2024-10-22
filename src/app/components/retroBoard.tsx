@@ -8,7 +8,7 @@ import { Socket } from "socket.io-client";
 import User from "@/app/types/user";
 import Comment from "@/app/types/comment";
 import { gatherAndSortPostsWithSectionTitle } from "@/app/utils/helper";
-import { SnackBar } from "@/app/types/snackBar";
+// import { SnackBar } from "@/app/types/snackBar";
 import PostWithSectionTitle from "../types/postWithSectionTitle";
 import SnackbarComponent from "./retroBoard/snackBarComponent";
 import BoardHeader from "./retroBoard/boardHeader";
