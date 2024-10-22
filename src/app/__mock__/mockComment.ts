@@ -5,7 +5,6 @@ const mockComment: Comment = {
   id: 0,
   user: mockUser1,
   text: "this is a mock comment",
-  timestamp: new Date("2024-12-25"),
 };
 
 export default mockComment;
