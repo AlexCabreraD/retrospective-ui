@@ -1,5 +1,6 @@
 import Section from "@/app/types/section";
 import Post from "@/app/types/post";
+import { profileIconColors } from "@/app/utils/helper";
 
 function generatePosts(postCount: number): Post[] {
   const posts: Post[] = [];
@@ -7,7 +8,12 @@ function generatePosts(postCount: number): Post[] {
   for (let i = 1; i <= postCount; i++) {
     posts.push({
       id: i - 1,
-      user: { id: i.toString(), name: `User${i}` },
+      user: {
+        id: i.toString(),
+        name: `User${i}`,
+        role: "user",
+        color: profileIconColors[i],
+      },
       text: `This is post number ${i}`,
       likeCount: Math.floor(Math.random() * 100),
       comments: [],
