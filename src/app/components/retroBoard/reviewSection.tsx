@@ -4,6 +4,7 @@ import { Socket } from "socket.io-client";
 import Comment from "@/app/types/comment";
 import { useState } from "react";
 import { IoSend } from "react-icons/io5";
+import { scrollbarStyle } from "@/app/utils/helper";
 
 interface ReviewSectionProps {
   sortedPosts: PostWithSectionTitle[];
@@ -85,7 +86,7 @@ const ReviewSection = ({
 
         <hr className="h-px bg-[#292929] border-0 mt-4" />
         <div className="flex flex-col flex-grow overflow-hidden">
-          <div className="flex-grow overflow-y-auto mb-4">
+          <div className={`flex-grow overflow-y-auto mb-4 ${scrollbarStyle}`}>
             {postUnderReview.post.comments &&
             postUnderReview.post.comments.length > 0 ? (
               postUnderReview.post.comments.map((comment: Comment) => (

@@ -4,6 +4,7 @@ import NewPostInput from "../newPostInput";
 import Section from "@/app/types/section";
 import { Socket } from "socket.io-client";
 import { Dispatch, SetStateAction, useState } from "react";
+import { scrollbarStyle } from "@/app/utils/helper";
 
 interface cardsViewProps {
   sections: Section[];
@@ -43,7 +44,7 @@ const CardsView = ({
       {sections?.map((section: Section) => (
         <div
           key={section.id}
-          className={`bg-[#1e1e1e] rounded-lg overflow-auto`}
+          className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}
         >
           <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
             <div className="flex justify-between items-center">

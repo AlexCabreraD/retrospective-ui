@@ -149,35 +149,43 @@ export default function RetroBoard({
               ...section,
               posts: section.posts.map((post) => {
                 if (post.id === data.postId) {
+                  const updatedComments = [...post.comments, data.comment];
+
                   setPostUnderReview((prevPostUnderReview) => {
                     if (prevPostUnderReview?.post.id === data.postId) {
                       return {
                         ...prevPostUnderReview,
                         post: {
                           ...prevPostUnderReview.post,
-                          comments: [...prevPostUnderReview.post.comments, data.comment],
+                          comments: updatedComments,
                         },
                       };
                     }
                     return prevPostUnderReview;
                   });
-                  setReplyTo((prevState) => ({
-                    ...prevState,
-                    post: {
-                      ...post,
-                      comments: [...post.comments, data.comment],
-                    },
-                  }));
+
+                  setReplyTo((prevState) => {
+                    if (prevState?.post?.id === data.postId) {
+                      return {
+                        ...prevState,
+                        post: {
+                          ...prevState.post,
+                          comments: updatedComments,
+                        },
+                      };
+                    }
+                    return prevState;
+                  });
+
                   return {
                     ...post,
-                    comments: [...post.comments, data.comment],
+                    comments: updatedComments,
                   };
                 }
                 return post;
               }),
             };
           }
-
           return section;
         }),
       );
