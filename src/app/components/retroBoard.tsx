@@ -47,7 +47,7 @@ export default function RetroBoard({
   const [voting, setVoting] = useState<boolean>(false);
   const [votesLeft, setVotesLeft] = useState<number>(5);
   const [reviewing, setReviewing] = useState(false);
-  const [snackBar, setSnackBar] = useState<SnackBar>();
+  // const [snackBar, setSnackBar] = useState<SnackBar>();
 
   const [sortedPosts, setSortedPosts] = useState<PostWithSectionTitle[]>([]);
   const [postUnderReview, setPostUnderReview] =
@@ -210,7 +210,7 @@ export default function RetroBoard({
         const sortedPostsTemp = [...prevSortedPosts];
         const nextPost = sortedPostsTemp.shift();
         if (nextPost) {
-          setPostUnderReview((prevState) => {
+          setPostUnderReview(() => {
             return nextPost;
           });
         }

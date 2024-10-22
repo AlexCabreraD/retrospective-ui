@@ -1,4 +1,3 @@
-import Board from "@/app/types/board";
 import { Tooltip } from "../tooltip";
 
 interface boardHeaderProps {

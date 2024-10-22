@@ -29,10 +29,6 @@ const CardsView = ({
 }: cardsViewProps) => {
   const [activeSectionId, setActiveSectionId] = useState<number | null>(null);
 
-  const handlePost = (postText: string, sectionId: number) => {
-    console.log(`Posted in section ${sectionId}: ${postText}`);
-  };
-
   const toggleSection = (sectionId: number) => {
     setActiveSectionId((prevId) => (prevId === sectionId ? null : sectionId));
   };

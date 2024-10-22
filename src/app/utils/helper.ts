@@ -2,7 +2,8 @@ import Post from "../types/post";
 import PostWithSectionTitle from "../types/postWithSectionTitle";
 import Section from "../types/section";
 
-export const SOCKET_SERVER_URL: string = "http://localhost:8080";
+export const SOCKET_SERVER_URL: string =
+  process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || "http://localhost:8080";
 
 export const scrollbarStyle =
   "overflow-auto overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500";

@@ -3,7 +3,7 @@ import Card from "@/app/components/card";
 import { IoSend } from "react-icons/io5";
 import Comment from "@/app/types/comment";
 import { Socket } from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { scrollbarStyle } from "@/app/utils/helper";
 
 interface CommentModalProps {
