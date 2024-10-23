@@ -30,7 +30,7 @@ export default function Home() {
 
   useEffect(() => {
     const socketInstance = io(SOCKET_SERVER_URL, {
-      transports: ["websocket", "polling"],
+      transports: ["polling"], // Only use polling
     });
     setSocket(socketInstance);
 
