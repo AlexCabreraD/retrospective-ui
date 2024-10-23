@@ -29,7 +29,9 @@ export default function Home() {
   const [board, setBoard] = useState<Board | null>(null);
 
   useEffect(() => {
-    const socketInstance = io(SOCKET_SERVER_URL);
+    const socketInstance = io(SOCKET_SERVER_URL, {
+      transports: ["websocket", "polling"],
+    });
     setSocket(socketInstance);
 
     const handleJoinedBoard = (data: { board: Board; user: User }) => {
