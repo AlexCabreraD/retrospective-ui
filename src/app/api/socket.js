@@ -2,7 +2,8 @@ import { Server } from "socket.io";
 
 const io = new Server({
   cors: {
-    origin: process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000",
+    // origin: "http://localhost:3000",
+    origin: "https://retrospective-ui.vercel.app/",
     methods: ["GET", "POST"],
   },
 });
