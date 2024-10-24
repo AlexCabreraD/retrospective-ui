@@ -80,7 +80,7 @@ const ReviewSection = ({
           key={postUnderReview.post.id}
           post={postUnderReview.post}
           socket={socket}
-          className="mt-4 min-h-[120px] max-h-[150px]"
+          className="mt-4 max-h-[150px]"
           showLikeCountOnly
         />
 
@@ -126,8 +126,8 @@ const ReviewSection = ({
   };
 
   return (
-    <div className="flex h-full max-h-[90%] overflow-hidden">
-      <div className="bg-[#1e1e1e] p-4 mr-8 rounded min-w-[480px] h-full">
+    <div className="flex flex-wrap md:flex-nowrap h-full max-h-[90%] overflow-auto md:overflow-hidden">
+      <div className="bg-[#1e1e1e] p-4 rounded w-full md:mr-8">
         <div className="flex justify-between w-full">
           <span className="text-h2-sm">Cards</span>
           <button
@@ -143,7 +143,7 @@ const ReviewSection = ({
         <div className="mt-4 w-full h-full">{renderSortedPosts()}</div>
       </div>
 
-      <div className="bg-[#1e1e1e] p-4 rounded min-w-[682px]">
+      <div className="bg-[#1e1e1e] p-4 rounded w-full mt-[16px] md:mt-0">
         {renderPostUnderReview()}
       </div>
     </div>

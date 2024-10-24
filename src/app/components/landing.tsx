@@ -103,8 +103,18 @@ export default function Landing({
   };
 
   return (
-    <div className={"w-[650px] flex flex-col justify-center"}>
-      <p className={"w-full text-h1-lg tracking-[.6em]"}>Retrospective</p>
+    <div
+      className={
+        "w-[650px] flex flex-col justify-center items-center text-center md:items-start md:text-start"
+      }
+    >
+      <p
+        className={
+          "w-full text-h1-sm tracking-[.2em] md:text-h1-lg md:tracking-[.6em]"
+        }
+      >
+        Retrospective
+      </p>
       <div className={"w-[80%]"}>
         {isNameSet && (
           <div className={"flex flex-col"}>
@@ -121,7 +131,7 @@ export default function Landing({
         )}
         {!isNameSet && (
           <>
-            <p className={"pt-[32px]"}>Enter your display name</p>
+            <p className={"pt-[32px] text-start"}>Enter your display name</p>
             <input
               placeholder={"Your Name"}
               value={displayName}

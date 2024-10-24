@@ -34,13 +34,13 @@ const CardsView = ({
   };
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full overflow-hidden"
+      className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 w-full h-full overflow-auto md:overflow-hidden"
       id={"cards"}
     >
       {sections?.map((section: Section) => (
         <div
           key={section.id}
-          className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle}`}
+          className={`bg-[#1e1e1e] rounded-lg overflow-auto ${scrollbarStyle} min-h-[75vh]`}
         >
           <div className={"sticky top-0 bg-[#1e1e1e] p-4 z-10"}>
             <div className="flex justify-between items-center">
